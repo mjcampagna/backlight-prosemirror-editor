@@ -10,21 +10,6 @@ export const strikethroughExtension = {
     }
   },
   md: {
-    configureMarkdownIt(md) {
-      // Enable strikethrough plugin if available
-      if (md.use && typeof md.use === 'function') {
-        try {
-          // This would work if markdown-it-strikethrough was installed
-          // md.use(require('markdown-it-strikethrough'));
-        } catch (e) {
-          // Fallback: basic manual parsing
-        }
-      }
-    },
-    tokens: {
-      s_open: { mark: "strikethrough" },
-      s_close: { mark: "strikethrough" }
-    },
     toMarkdown: {
       marks: {
         strikethrough: {
