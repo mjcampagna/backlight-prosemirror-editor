@@ -21,6 +21,9 @@ export function createMarkdownKeymap(schema) {
     bind["Shift-Ctrl-1"] = setBlockType(schema.nodes.heading, { level: 1 });
     bind["Shift-Ctrl-2"] = setBlockType(schema.nodes.heading, { level: 2 });
     bind["Shift-Ctrl-3"] = setBlockType(schema.nodes.heading, { level: 3 });
+    bind["Shift-Ctrl-4"] = setBlockType(schema.nodes.heading, { level: 4 });
+    bind["Shift-Ctrl-5"] = setBlockType(schema.nodes.heading, { level: 5 });
+    bind["Shift-Ctrl-6"] = setBlockType(schema.nodes.heading, { level: 6 });
   }
 
   if (schema.nodes.blockquote) bind["Shift-Ctrl-b"] = applyBlockquoteUnified(schema.nodes.blockquote);
@@ -91,16 +94,23 @@ export function markdownToolbarPlugin(options = {}) {
       if (schema.nodes.paragraph && schema.nodes.heading) {
         const p = schema.nodes.paragraph, h = schema.nodes.heading;
         items.push(makeSelect({
-          options: [["p", "Paragraph"], ["h1", "H1"], ["h2", "H2"], ["h3", "H3"]],
+          options: [["p", "Paragraph"], ["h1", "H1"], ["h2", "H2"], ["h3", "H3"], ["h4", "H4"], ["h5", "H5"], ["h6", "H6"]],
           compute: (s) => {
             if (isBlockActive(s, h, { level: 1 })) return "h1";
             if (isBlockActive(s, h, { level: 2 })) return "h2";
             if (isBlockActive(s, h, { level: 3 })) return "h3";
+            if (isBlockActive(s, h, { level: 4 })) return "h4";
+            if (isBlockActive(s, h, { level: 5 })) return "h5";
+            if (isBlockActive(s, h, { level: 6 })) return "h6";
             return "p";
           },
           apply: (view, v) => {
-            const cmd = v === "p" ? setBlockType(p) : setBlockType(h, { level: v === "h1" ? 1 : v === "h2" ? 2 : 3 });
-            cmd(view.state, view.dispatch, view);
+            if (v === "p") {
+              setBlockType(p)(view.state, view.dispatch, view);
+            } else {
+              const level = parseInt(v.substring(1)); // Extract number from "h1", "h2", etc.
+              setBlockType(h, { level })(view.state, view.dispatch, view);
+            }
           },
           isEnabled: (s) => {
             const { list_item, paragraph } = s.schema.nodes;

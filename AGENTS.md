@@ -39,9 +39,9 @@ src/
 
 ### Testing
 - **Framework**: Vitest with jsdom
-- **Coverage**: Core functionality, utilities, UI builders
+- **Coverage**: Core functionality, utilities, UI builders, headings H1-H6
 - **Location**: `__tests__/` folders alongside source files
-- **Test files**: 40 tests across 7 test files
+- **Test files**: 43 tests across 8 test files
 
 ## Code Conventions
 - ES modules with `.js` extensions
