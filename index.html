@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <title>ProseMirror + Vite (HMR) Test</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    .editor-wrap {
+      max-width: 700px;
+      margin: 40px auto;
+    }
+
+    .toolbar-hint {
+      font: 14px/1.4 system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      color: #444;
+      margin-bottom: 8px;
+    }
+
+    .ProseMirror {
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 12px;
+      min-height: 180px;
+      outline: none;
+    }
+
+    .ProseMirror-focused {
+      box-shadow: 0 0 0 2px rgba(66, 153, 225, .45);
+    }
+
+    .ProseMirror p {
+      margin: 0 0 10px;
+    }
+
+    /* Menu bar baseline styling */
+    .ProseMirror-menubar {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 6px;
+      background: #f8f8f8;
+      border: 1px solid #ddd;
+      border-bottom: none;
+      border-radius: 8px 8px 0 0;
+      box-shadow: inset 0 -1px 0 #e0e0e0;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      white-space: nowrap;
+      height: 36px;
+      min-height: 36px;
+    }
+
+    .ProseMirror-menubar .ProseMirror-menuitem-group {
+      display: inline-flex;
+      gap: 2px;
+    }
+
+    .ProseMirror-menubar .ProseMirror-menuitem {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      height: 28px;
+      min-width: 28px;
+      padding: 0 8px;
+      font: 14px/1 system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      background: #fff;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      cursor: pointer;
+      user-select: none;
+      transition: background .15s, border-color .15s, box-shadow .15s;
+    }
+
+    .ProseMirror-menubar .ProseMirror-menuitem:hover {
+      background: #f2f2f2;
+      border-color: #bbb;
+    }
+
+    .ProseMirror-menubar .ProseMirror-menuitem-active {
+      background: #e8f0fe;
+      border-color: #4285f4;
+    }
+
+    .ProseMirror-menubar .ProseMirror-menuitem.disabled {
+      opacity: .45;
+      pointer-events: none;
+    }
+
+
+    /* from `node_modules/prosemirror-view/style/prosemirror.css` */
+    .ProseMirror {
+      position: relative;
+    }
+
+    .ProseMirror {
+      word-wrap: break-word;
+      white-space: pre-wrap;
+      white-space: break-spaces;
+      -webkit-font-variant-ligatures: none;
+      font-variant-ligatures: none;
+      font-feature-settings: "liga" 0;
+      /* the above doesn't seem to work in Edge */
+    }
+
+    .ProseMirror pre {
+      white-space: pre-wrap;
+    }
+
+    .ProseMirror li {
+      position: relative;
+    }
+
+    .ProseMirror-hideselection *::selection {
+      background: transparent;
+    }
+
+    .ProseMirror-hideselection *::-moz-selection {
+      background: transparent;
+    }
+
+    .ProseMirror-hideselection {
+      caret-color: transparent;
+    }
+
+    /* See https://github.com/ProseMirror/prosemirror/issues/1421#issuecomment-1759320191 */
+    .ProseMirror [draggable][contenteditable=false] {
+      user-select: text
+    }
+
+    .ProseMirror-selectednode {
+      outline: 2px solid #8cf;
+    }
+
+    /* Make sure li selections wrap around markers */
+
+    li.ProseMirror-selectednode {
+      outline: none;
+    }
+
+    li.ProseMirror-selectednode:after {
+      content: "";
+      position: absolute;
+      left: -32px;
+      right: -2px;
+      top: -2px;
+      bottom: -2px;
+      border: 2px solid #8cf;
+      pointer-events: none;
+    }
+
+    /* Protect against generic img rules */
+
+    img.ProseMirror-separator {
+      display: inline !important;
+      border: none !important;
+      margin: 0 !important;
+    }
+
+    /* toolbar */
+
+    .pm-toolbar {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px;
+      background: #f8f8f8;
+      border: 1px solid #ddd;
+      border-bottom: none;
+      border-radius: 8px 8px 0 0;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      height: 36px;
+      min-height: 36px;
+      white-space: nowrap;
+    }
+
+    .pm-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      height: 28px;
+      min-width: 28px;
+      padding: 0 8px;
+      font: 14px/1 system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      background: #fff;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      cursor: pointer;
+      user-select: none;
+      transition: background .15s, border-color .15s, box-shadow .15s;
+    }
+
+    .pm-btn:hover {
+      background: #f2f2f2;
+      border-color: #bbb;
+    }
+
+    .pm-btn.active {
+      background: #e8f0fe;
+      border-color: #4285f4;
+    }
+
+    .pm-btn:disabled {
+      opacity: .45;
+      cursor: default;
+    }
+
+    .pm-select select {
+      height: 28px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      background: #fff;
+      font: 14px/1 system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      padding: 0 6px;
+    }
+
+    /* html literal */
+
+    /* Your stylesheet */
+    .pm-html-literal {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      background: transparent;
+      /* or a subtle tint if you want */
+      color: inherit;
+      /* keep text color unless you want to change it */
+      white-space: pre-wrap;
+      /* preserves spacing nicely */
+    }
+
+    /* gargage */
+
+    textarea {
+      height: 256px;
+      width: 384px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="editor-wrap">
+    <div style="margin-bottom: 12px;">
+      <button aria-label="Editor mode" class="toggle-editor-mode" type="button"></button>
+    </div>
+
+    <textarea class="prosemirror-enabled">
+# Hello!
+
+- This is initial **Markdown** content.
+- Use the radios above to switch views.
+- In ProseMirror, try **bold** (Mod-B) and *italic* (Mod-I).
+    </textarea>
+  </div>
+
+  <!-- Dev (HMR): served by Vite -->
+  <script>
+    window.__PM_DEBUG = false
+  </script>
+  <script type="module" src="/dev/main.js"></script>
+
+  <!-- Prod build (toggle on after `npm run build`) -->
+  <!--
+  <script type="module">
+    import { createEditor } from "./dist/prosemirror-bundle.esm.js";
+    createEditor("#editor", "<p>Hello from <strong>ProseMirror</strong> (prod)!</p>");
+  </script>
+
+  <script>
+    // Or IIFE (non-module script)
+    // <script src="./dist/prosemirror-bundle.iife.js"></script>
+    // window.PMBundle.createEditor("#editor", "<p>Hello (IIFE)!</p>");
+  </script>
+  -->
+</body>
+
+</html>
