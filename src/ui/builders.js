@@ -25,7 +25,13 @@ export function makeSelect({ options, compute, apply, isEnabled }) {
   const wrap = document.createElement("div");
   wrap.className = "pm-select";
   const sel = document.createElement("select");
-  sel.innerHTML = options.map(([v, l]) => `<option value="${v}">${l}</option>`).join("");
+  // Safely create option elements to avoid XSS
+  options.forEach(([value, label]) => {
+    const option = document.createElement("option");
+    option.value = value;
+    option.textContent = label;
+    sel.appendChild(option);
+  });
   wrap.appendChild(sel);
   let viewRef = null;
   sel.addEventListener("change", () => { if (viewRef) { apply(viewRef, sel.value); viewRef.focus(); } });

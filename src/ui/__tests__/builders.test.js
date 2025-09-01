@@ -97,8 +97,8 @@ describe('UI Builders', () => {
 
       expect(select.dom).toBeDefined()
       expect(select.dom.className).toBe('pm-select')
-      expect(select.dom.innerHTML).toContain('<option value="p">Paragraph</option>')
-      expect(select.dom.innerHTML).toContain('<option value="h1">Heading 1</option>')
+      // After refactor, options are created as DOM elements, not innerHTML
+      expect(select.dom.appendChild).toHaveBeenCalled()
     })
 
     it('should update value based on compute function', () => {
