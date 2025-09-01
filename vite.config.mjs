@@ -7,15 +7,18 @@ export default defineConfig({
   },
   build: {
     sourcemap: true,
+    minify: true,
     lib: {
       entry: "src/index.js",
       name: "PMBundle",
-      fileName: () => "prosemirror-bundle.esm.js",
-      formats: ["es"]
+      fileName: (format) => 
+        format === "es" ? "prosemirror-bundle.esm.js" : "prosemirror-bundle.iife.js",
+      formats: ["es", "iife"]
     },
     rollupOptions: {
       external: []
     },
+
     emptyOutDir: true
   },
   define: {
