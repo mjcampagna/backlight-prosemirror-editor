@@ -24,8 +24,10 @@
 - `src/index.js` - Main editor implementation with dual markdown/WYSIWYG modes
 - `src/markdownSystem.js` - Extension system for custom markdown features
 - `src/markdownToolbarPlugin.js` - Refactored toolbar plugin (208 lines, was 898)
-- `src/styles/baseline.css` - Essential editor styles for production bundle
-- `src/styles/demo.css` - Demo-specific layout styles
+- `src/styles/baseline.css` - Essential editor styles with CSS variables
+- `src/styles/demo.css` - Demo-specific layout styles  
+- `src/styles/navigation.css` - Demo page navigation (not in bundle)
+
 
 ### Modular Architecture
 ```
