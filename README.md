@@ -21,13 +21,14 @@ npm run test   # Run tests
 
 ## Usage
 
-The editor automatically initializes on any `<textarea class="prosemirror-enabled">` element with a toggle button for switching modes.
+### Basic Usage
+
+The editor requires explicit initialization on `<textarea class="prosemirror-enabled">` elements with a toggle button for switching modes.
 
 ```html
 <head>
   <!-- Include essential editor styles -->
   <link rel="stylesheet" href="./dist/prosemirror-bundle.css">
-  <!-- Add your own layout styles as needed -->
 </head>
 <body>
   <div>
@@ -39,9 +40,32 @@ This is **markdown** content.
     </textarea>
   </div>
   
-  <!-- Include editor functionality -->
-  <script type="module" src="./dist/prosemirror-bundle.esm.js"></script>
+  <!-- Initialize the editor -->
+  <script type="module">
+    import { initProseMirrorEditor } from "./dist/prosemirror-bundle.esm.js";
+    initProseMirrorEditor();
+  </script>
 </body>
+```
+
+### Custom Selector
+
+Use your own CSS selector for targeting textareas:
+
+```html
+<!-- Your HTML -->
+<textarea class="my-editor">Content here</textarea>
+
+<!-- Initialize with custom selector -->
+<script type="module">
+  import { initProseMirrorEditor } from "./dist/prosemirror-bundle.esm.js";
+  
+  // Custom selector
+  initProseMirrorEditor(".my-editor");
+  
+  // Or multiple selectors
+  initProseMirrorEditor("textarea[data-editor='prosemirror']");
+</script>
 ```
 
 ## Architecture

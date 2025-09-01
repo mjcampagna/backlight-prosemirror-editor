@@ -7,25 +7,13 @@ export default defineConfig({
   },
   build: {
     sourcemap: true,
+    lib: {
+      entry: "src/index.js",
+      name: "PMBundle",
+      fileName: () => "prosemirror-bundle.esm.js",
+      formats: ["es"]
+    },
     rollupOptions: {
-      input: {
-        main: "src/index.js",
-        styles: "src/styles/baseline.css"
-      },
-      output: {
-        entryFileNames: (chunkInfo) => {
-          if (chunkInfo.name === 'main') {
-            return 'prosemirror-bundle.esm.js'
-          }
-          return '[name]-[hash].js'
-        },
-        assetFileNames: (assetInfo) => {
-          if (assetInfo.name?.endsWith('.css')) {
-            return 'prosemirror-bundle.css'
-          }
-          return '[name]-[hash].[ext]'
-        }
-      },
       external: []
     },
     emptyOutDir: true

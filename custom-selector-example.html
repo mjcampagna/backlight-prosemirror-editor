@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <title>Custom Selector Example</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="./dist/prosemirror-bundle.css">
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      padding: 20px;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    
+    .example {
+      background: #f9f9f9;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 30px;
+      border-left: 4px solid #4285f4;
+    }
+    
+    .example h2 {
+      margin-top: 0;
+    }
+    
+    .editor-container {
+      margin: 20px 0;
+    }
+    
+    .my-custom-editor,
+    .blog-editor {
+      width: 400px;
+      height: 150px;
+      margin: 10px 0;
+    }
+    
+    code {
+      background: #f4f4f4;
+      padding: 2px 6px;
+      border-radius: 3px;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Custom Selector Examples</h1>
+  
+  <div class="example">
+    <h2>Example 1: Custom Class</h2>
+    <p>Using <code>.my-custom-editor</code> class:</p>
+    
+    <div class="editor-container">
+      <button>Toggle Mode</button>
+      <textarea class="my-custom-editor">
+# Custom Class Example
+
+This textarea uses a **custom class** instead of the default.
+      </textarea>
+    </div>
+  </div>
+
+  <div class="example">
+    <h2>Example 2: Data Attribute</h2>
+    <p>Using <code>[data-editor="prosemirror"]</code> attribute:</p>
+    
+    <div class="editor-container">
+      <button>Toggle Mode</button>
+      <textarea data-editor="prosemirror">
+# Data Attribute Example
+
+This textarea uses a **data attribute** for targeting.
+      </textarea>
+    </div>
+  </div>
+
+  <div class="example">
+    <h2>Example 3: Multiple Elements</h2>
+    <p>Using <code>.blog-editor</code> class (multiple instances):</p>
+    
+    <div class="editor-container">
+      <button>Toggle Mode</button>
+      <textarea class="blog-editor">
+# Blog Post Title
+
+Write your **blog content** here.
+      </textarea>
+    </div>
+    
+    <div class="editor-container">
+      <button>Toggle Mode</button>
+      <textarea class="blog-editor">
+# Another Post
+
+Another **editor instance** with the same class.
+      </textarea>
+    </div>
+  </div>
+
+  <script>
+    window.__PM_DEBUG = false
+  </script>
+  
+  <script type="module">
+    import { initProseMirrorEditor } from "./dist/prosemirror-bundle.esm.js";
+    
+    // Initialize different selectors
+    initProseMirrorEditor(".my-custom-editor");
+    initProseMirrorEditor("[data-editor='prosemirror']");
+    initProseMirrorEditor(".blog-editor");
+  </script>
+</body>
+
+</html>

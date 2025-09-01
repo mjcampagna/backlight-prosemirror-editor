@@ -6,7 +6,7 @@
   <title>ProseMirror Editor - Production Example</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <!-- Essential editor styles -->
-  <link rel="stylesheet" href="./dist/prosemirror-bundle.css">
+  <link rel="stylesheet" href="/dist/prosemirror-bundle.css">
   <script type="module">
     import "/src/styles/navigation.css";
     import "/src/styles/demo.css";
@@ -43,7 +43,15 @@
   <script>
     window.__PM_DEBUG = false
   </script>
-  <script type="module" src="./dist/prosemirror-bundle.esm.js"></script>
+  <script type="module">
+    try {
+      const { initProseMirrorEditor } = await import("./dist/prosemirror-bundle.esm.js");
+      console.log("✓ initProseMirrorEditor imported successfully");
+      initProseMirrorEditor();
+    } catch (error) {
+      console.error("Import failed:", error);
+    }
+  </script>
 </body>
 
 </html>

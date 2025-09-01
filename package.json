@@ -5,7 +5,9 @@
 	"main": "index.js",
 	"scripts": {
 		"dev": "vite",
-		"build": "vite build",
+		"build": "npm run build:js && npm run build:css",
+		"build:js": "vite build",
+		"build:css": "node scripts/build-css.cjs",
 		"serve": "vite preview",
 		"test": "vitest",
 		"test:ui": "vitest --ui",

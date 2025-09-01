@@ -115,7 +115,10 @@
   <script>
     window.__PM_DEBUG = false
   </script>
-  <script type="module" src="./dist/prosemirror-bundle.esm.js"></script>
+  <script type="module">
+    import { initProseMirrorEditor } from "./dist/prosemirror-bundle.esm.js";
+    initProseMirrorEditor();
+  </script>
 </body>
 
 </html>

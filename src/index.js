@@ -266,7 +266,15 @@ function wireEditorToggle(ta) {
   };
 }
 
-// Init all textareas
-document
-  .querySelectorAll("textarea.prosemirror-enabled")
-  .forEach((ta) => wireEditorToggle(ta));
+// Configurable initialization function
+export function initProseMirrorEditor(selector = "textarea.prosemirror-enabled") {
+  document
+    .querySelectorAll(selector)
+    .forEach((ta) => wireEditorToggle(ta));
+}
+
+// Export additional utilities for advanced usage
+export { createMarkdownSystem } from "./markdownSystem.js";
+export { buildMarkdownPlugins } from "./markdownToolbarPlugin.js";
+
+

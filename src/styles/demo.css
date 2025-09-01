@@ -15,7 +15,7 @@
 /* Demo textarea styling */
 textarea {
   height: 256px;
-  width: 384px;
+  width: 100%;
 }
 
 /* Legacy menubar styles (if using prosemirror-example-setup) */
