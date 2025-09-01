@@ -42,21 +42,27 @@ describe('Heading Support', () => {
     })
   })
 
-  it('should have keyboard shortcuts for all heading levels', () => {
-    // This is tested by ensuring the keymap includes the shortcuts
-    const expectedShortcuts = [
-      'Shift-Ctrl-1',
-      'Shift-Ctrl-2', 
-      'Shift-Ctrl-3',
-      'Shift-Ctrl-4',
-      'Shift-Ctrl-5',
-      'Shift-Ctrl-6'
-    ]
+  it('should create keymap with all heading shortcuts', () => {
+    const { createMarkdownKeymap } = require('../markdownToolbarPlugin.js')
+    const keymap = createMarkdownKeymap(schema)
     
-    // Import and test keymap creation
-    import('../markdownToolbarPlugin.js').then(({ createMarkdownKeymap }) => {
-      const keymap = createMarkdownKeymap(schema)
-      expect(keymap).toBeDefined()
+    expect(keymap).toBeDefined()
+    expect(keymap.spec.props.handleKeyDown).toBeDefined()
+  })
+
+  it('should handle H4-H6 in toolbar dropdown', () => {
+    // Test that the new heading levels work in selection
+    const testCases = [
+      { markdown: '#### H4', level: 4 },
+      { markdown: '##### H5', level: 5 },
+      { markdown: '###### H6', level: 6 }
+    ]
+
+    testCases.forEach(({ markdown, level }) => {
+      const doc = defaultMarkdownParser.parse(markdown)
+      const state = EditorState.create({ schema, doc })
+      
+      expect(isBlockActive(state, schema.nodes.heading, { level })).toBe(true)
     })
   })
 })

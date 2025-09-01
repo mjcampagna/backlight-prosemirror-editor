@@ -7,21 +7,26 @@ export default defineConfig({
   },
   build: {
     sourcemap: true,
-    lib: {
-      entry: "src/index.js",
-      name: "PMBundle",                    // global for IIFE
-      fileName: (format) =>
-        format === "es" ? "prosemirror-bundle.esm.js"
-          : "prosemirror-bundle.iife.js",
-      formats: ["es", "iife"]
-    },
     rollupOptions: {
-      // We want a single file per format
-      output: {
-        inlineDynamicImports: true
+      input: {
+        main: "src/index.js",
+        styles: "src/styles/baseline.css"
       },
-      // Bundle all deps so the output is drop-in
-      external: [],    // keep empty => bundle everything
+      output: {
+        entryFileNames: (chunkInfo) => {
+          if (chunkInfo.name === 'main') {
+            return 'prosemirror-bundle.esm.js'
+          }
+          return '[name]-[hash].js'
+        },
+        assetFileNames: (assetInfo) => {
+          if (assetInfo.name?.endsWith('.css')) {
+            return 'prosemirror-bundle.css'
+          }
+          return '[name]-[hash].[ext]'
+        }
+      },
+      external: []
     },
     emptyOutDir: true
   },

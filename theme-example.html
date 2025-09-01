@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <title>ProseMirror Editor - Custom Theme Example</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <!-- Essential editor styles -->
+  <link rel="stylesheet" href="./dist/prosemirror-bundle.css">
+  <style>
+    /* Custom theme using CSS variables */
+    :root {
+      /* Dark theme example */
+      --pm-editor-border: #444;
+      --pm-editor-border-focus: #666;
+      --pm-editor-bg: #1a1a1a;
+      
+      --pm-toolbar-bg: #2d2d2d;
+      --pm-toolbar-border: #444;
+      
+      --pm-btn-bg: #333;
+      --pm-btn-border: #555;
+      --pm-btn-hover-bg: #404040;
+      --pm-btn-hover-border: #666;
+      --pm-btn-active-bg: #0066cc;
+      --pm-btn-active-border: #0088ff;
+      
+      --pm-select-bg: #333;
+      --pm-select-border: #555;
+    }
+    
+    /* Additional dark theme styles */
+    body {
+      background: #1a1a1a;
+      color: #e0e0e0;
+      font-family: system-ui, sans-serif;
+      margin: 0;
+      padding: 20px;
+    }
+    
+    .ProseMirror {
+      color: #e0e0e0;
+    }
+    
+    .pm-btn {
+      color: #e0e0e0;
+    }
+    
+    .pm-select select {
+      color: #e0e0e0;
+    }
+    
+    /* Layout */
+    .editor-wrap {
+      max-width: 700px;
+      margin: 20px auto;
+    }
+    
+    textarea {
+      background: #1a1a1a;
+      color: #e0e0e0;
+      border: 1px solid #444;
+      height: 256px;
+      width: 384px;
+    }
+    
+    h1 {
+      color: #fff;
+      text-align: center;
+    }
+    
+    .info {
+      background: #2d2d2d;
+      color: #e0e0e0;
+      padding: 15px;
+      border: 1px solid #444;
+      border-radius: 6px;
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>🌙 Dark Theme Example</h1>
+  
+  <div class="info">
+    <strong>Custom Theme:</strong> This demonstrates how easy it is to customize the editor's appearance using CSS variables. Simply override the <code>--pm-*</code> variables to match your design.
+  </div>
+
+  <div class="editor-wrap">
+    <div style="margin-bottom: 12px;">
+      <button aria-label="Editor mode" class="toggle-editor-mode" type="button"></button>
+    </div>
+
+    <textarea class="prosemirror-enabled">
+# Dark Theme Demo
+
+- This uses **custom CSS variables** for theming.
+- The editor adapts to your design system.
+- Try switching between markdown and WYSIWYG modes.
+- All heading levels H1-H6 are supported.
+
+## Code Example
+
+```css
+:root {
+  --pm-editor-bg: #1a1a1a;
+  --pm-toolbar-bg: #2d2d2d;
+  --pm-btn-active-bg: #0066cc;
+}
+```
+    </textarea>
+  </div>
+
+  <script>
+    window.__PM_DEBUG = false
+  </script>
+  <script type="module" src="./dist/prosemirror-bundle.esm.js"></script>
+</body>
+
+</html>

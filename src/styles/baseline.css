@@ -1,0 +1,114 @@
+/* Import ProseMirror base styles */
+@import 'prosemirror-view/style/prosemirror.css';
+
+/* CSS Variables for customizable theming */
+:root {
+  /* Editor colors */
+  --pm-editor-border: #ddd;
+  --pm-editor-border-focus: #999;
+  --pm-editor-bg: #fff;
+  
+  /* Toolbar colors */
+  --pm-toolbar-bg: #f8f8f8;
+  --pm-toolbar-border: #ddd;
+  
+  /* Button colors */
+  --pm-btn-bg: #fff;
+  --pm-btn-border: #ccc;
+  --pm-btn-hover-bg: #f2f2f2;
+  --pm-btn-hover-border: #bbb;
+  --pm-btn-active-bg: #e8f0fe;
+  --pm-btn-active-border: #4285f4;
+  
+  /* Select colors */
+  --pm-select-bg: #fff;
+  --pm-select-border: #ccc;
+}
+
+/* Essential ProseMirror editor styles */
+.ProseMirror {
+  border: 1px solid var(--pm-editor-border);
+  border-radius: 8px;
+  padding: 12px;
+  min-height: 180px;
+  outline: none;
+  background: var(--pm-editor-bg);
+}
+
+.ProseMirror-focused {
+  border-color: var(--pm-editor-border-focus);
+}
+
+.ProseMirror p {
+  margin: 0 0 10px;
+}
+
+/* Essential toolbar styles */
+.pm-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px;
+  background: var(--pm-toolbar-bg);
+  border: 1px solid var(--pm-toolbar-border);
+  border-bottom: none;
+  border-radius: 8px 8px 0 0;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  height: 36px;
+  min-height: 36px;
+  white-space: nowrap;
+}
+
+.pm-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 28px;
+  min-width: 28px;
+  padding: 0 8px;
+  font: 14px/1 system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  background: var(--pm-btn-bg);
+  border: 1px solid var(--pm-btn-border);
+  border-radius: 4px;
+  cursor: pointer;
+  user-select: none;
+  transition: background .15s, border-color .15s, box-shadow .15s;
+}
+
+.pm-btn:hover {
+  background: var(--pm-btn-hover-bg);
+  border-color: var(--pm-btn-hover-border);
+}
+
+.pm-btn.active {
+  background: var(--pm-btn-active-bg);
+  border-color: var(--pm-btn-active-border);
+}
+
+.pm-btn:disabled {
+  opacity: .45;
+  cursor: default;
+}
+
+.pm-select {
+  display: inline-block;
+}
+
+.pm-select select {
+  height: 28px;
+  border: 1px solid var(--pm-select-border);
+  border-radius: 4px;
+  background: var(--pm-select-bg);
+  font: 14px/1 system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  padding: 0 6px;
+}
+
+/* HTML literal extension styling */
+.pm-html-literal {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  background: transparent;
+  color: inherit;
+  white-space: pre-wrap;
+}

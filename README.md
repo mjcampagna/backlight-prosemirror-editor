@@ -24,14 +24,24 @@ npm run test   # Run tests
 The editor automatically initializes on any `<textarea class="prosemirror-enabled">` element with a toggle button for switching modes.
 
 ```html
-<div>
-  <button>Toggle Mode</button>
-  <textarea class="prosemirror-enabled">
+<head>
+  <!-- Include essential editor styles -->
+  <link rel="stylesheet" href="./dist/prosemirror-bundle.css">
+  <!-- Add your own layout styles as needed -->
+</head>
+<body>
+  <div>
+    <button>Toggle Mode</button>
+    <textarea class="prosemirror-enabled">
 # Hello World
 
 This is **markdown** content.
-  </textarea>
-</div>
+    </textarea>
+  </div>
+  
+  <!-- Include editor functionality -->
+  <script type="module" src="./dist/prosemirror-bundle.esm.js"></script>
+</body>
 ```
 
 ## Architecture
@@ -64,6 +74,20 @@ const system = createMarkdownSystem([myExtension])
 ```
 
 See [EXTENSIONS.md](EXTENSIONS.md) for details.
+
+## Theming
+
+Customize colors using CSS variables:
+
+```css
+:root {
+  --pm-editor-bg: #f9f9f9;
+  --pm-btn-active-bg: #your-brand-color;
+  --pm-toolbar-bg: #your-background;
+}
+```
+
+See [THEMING.md](THEMING.md) for complete variable reference and examples.
 
 ## Debug Mode
 

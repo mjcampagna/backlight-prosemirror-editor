@@ -4,8 +4,14 @@
 
 ### Development
 - `npm run dev` - Start development server with HMR
-- `npm run build` - Build production bundle
+- `npm run build` - Build production bundle (JS + CSS)
 - `npm run serve` - Preview production build
+
+### Testing Different Styles
+- **Navigation hub**: `npm run dev` → `index.html` (choose variant)
+- **Full demo**: Click "📱 Full Demo" (with layout & demo styles)
+- **Baseline only**: Click "⚡ Baseline" (essential styles only)
+- **Production**: Click "🚀 Production" (built CSS example)
 
 ### Testing
 - `npm run test` - Run tests in watch mode
@@ -18,6 +24,8 @@
 - `src/index.js` - Main editor implementation with dual markdown/WYSIWYG modes
 - `src/markdownSystem.js` - Extension system for custom markdown features
 - `src/markdownToolbarPlugin.js` - Refactored toolbar plugin (208 lines, was 898)
+- `src/styles/baseline.css` - Essential editor styles for production bundle
+- `src/styles/demo.css` - Demo-specific layout styles
 
 ### Modular Architecture
 ```

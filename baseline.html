@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <title>ProseMirror Editor - Baseline Only</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <!-- Only baseline styles, no demo layout -->
+  <style>
+    /* Minimal navigation for baseline demo */
+    .nav {
+      background: #f5f5f5;
+      padding: 10px;
+      border-bottom: 1px solid #ddd;
+      margin-bottom: 20px;
+      font-family: system-ui, sans-serif;
+    }
+    .nav a {
+      margin-right: 10px;
+      text-decoration: none;
+      color: #333;
+      font-size: 14px;
+    }
+    .nav a.current {
+      font-weight: bold;
+    }
+    .info {
+      background: #fff3cd;
+      padding: 10px;
+      border: 1px solid #ffeaa7;
+      margin-bottom: 20px;
+      font-size: 14px;
+    }
+    body {
+      font-family: system-ui, sans-serif;
+      margin: 0;
+      padding: 20px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="nav">
+    <a href="/">← Home</a>
+    <a href="/demo.html">📱 Full Demo</a>
+    <a href="/baseline.html" class="current">⚡ Baseline</a>
+    <a href="/production.html">🚀 Production</a>
+  </div>
+
+  <div class="info baseline">
+    <strong>Baseline Only:</strong> This shows ONLY the essential editor styles with no layout opinions. This is exactly what consumers will see when they use your bundle.
+  </div>
+
+  <div class="editor-wrap">
+    <div style="margin-bottom: 12px;">
+      <button aria-label="Editor mode" class="toggle-editor-mode" type="button"></button>
+    </div>
+
+    <textarea class="prosemirror-enabled">
+# Baseline Only!
+
+- This has **no demo layout styles**.
+- Notice: no centering, no container width.  
+- This is the consumer experience.
+- Try all heading levels: H1 through H6.
+    </textarea>
+  </div>
+
+  <script>
+    window.__PM_DEBUG = false
+  </script>
+  <script type="module">
+    import "/src/styles/baseline.css";
+    import "/src/index.js";
+  </script>
+</body>
+
+</html>

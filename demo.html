@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <title>ProseMirror Editor - Full Demo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <!-- Demo: CSS loaded via Vite (baseline + demo styles) -->
+</head>
+
+<body>
+  <div class="nav">
+    <a href="/">← Home</a>
+    <a href="/demo.html" class="current">📱 Full Demo</a>
+    <a href="/baseline.html">⚡ Baseline</a>
+    <a href="/production.html">🚀 Production</a>
+  </div>
+
+  <div class="info demo">
+    <strong>Full Demo Version:</strong> Includes both baseline editor styles and demo layout styles. This shows the complete development experience with centered layout and styled textarea.
+  </div>
+
+  <div class="editor-wrap">
+    <div style="margin-bottom: 12px;">
+      <button aria-label="Editor mode" class="toggle-editor-mode" type="button"></button>
+    </div>
+
+    <textarea class="prosemirror-enabled">
+# Full Demo
+
+- This includes **demo layout styles**.
+- Switch between markdown and WYSIWYG modes.
+- Try all heading levels: H1 through H6.
+- Notice the centered layout and styled textarea.
+    </textarea>
+  </div>
+
+  <script>
+    window.__PM_DEBUG = false
+  </script>
+  <script type="module" src="/dev/main.js"></script>
+</body>
+
+</html>
