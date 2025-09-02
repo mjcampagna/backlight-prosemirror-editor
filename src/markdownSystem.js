@@ -56,7 +56,21 @@ export function createMarkdownSystem(extensions = []) {
     // explicitly pass a full token map. We keep empty as a last resort.
     {};
 
-  const mergedTokens = { ...baseTokens };
+  const mergedTokens = { 
+    ...baseTokens,
+    // Add support for HTML tokens that markdown-it generates
+    html_block: { 
+      node: "paragraph", 
+      getAttrs: (token) => {
+        // Preserve HTML content as text
+        return null;
+      }
+    },
+    html_inline: { 
+      node: "text", 
+      getAttrs: (token) => null 
+    }
+  };
   for (const ext of extensions) {
     if (ext.md?.tokens) Object.assign(mergedTokens, ext.md.tokens);
   }
