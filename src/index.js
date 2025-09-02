@@ -100,7 +100,7 @@ class ProseMirrorView {
 
     // Create markdown system with extensions and text processing
     const markdownSystem = createMarkdownSystem([], {
-      textProcessing: presets.disabled() // To disable unescaping of special characters
+      // textProcessing: presets.disabled() // To disable unescaping of special characters
     });
     const { schema, mdParser, mdSerializer, keymapPlugins } = markdownSystem;
     
