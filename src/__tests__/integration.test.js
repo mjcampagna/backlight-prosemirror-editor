@@ -2,7 +2,6 @@ import { describe, it, expect, beforeEach } from 'vitest'
 import { EditorState } from 'prosemirror-state'
 import { EditorView } from 'prosemirror-view'
 import { createMarkdownSystem } from '../markdownSystem.js'
-import { strikethroughExtension } from '../extensions/strikethrough.js'
 import { buildMarkdownPlugins } from '../markdownToolbarPlugin.js'
 
 // Mock DOM for EditorView
@@ -30,7 +29,7 @@ describe('Integration Tests', () => {
   let system, schema, plugins
 
   beforeEach(() => {
-    system = createMarkdownSystem([strikethroughExtension])
+    system = createMarkdownSystem([])
     schema = system.schema
     plugins = buildMarkdownPlugins(schema, { codeJoinMode: "smart" })
   })
@@ -46,12 +45,13 @@ describe('Integration Tests', () => {
 
       expect(state).toBeDefined()
       expect(state.doc.childCount).toBeGreaterThan(0)
-      expect(schema.marks.strikethrough).toBeDefined()
+      expect(schema.marks.strong).toBeDefined()
     })
 
-    it('should have strikethrough mark available', () => {
-      expect(schema.marks.strikethrough).toBeDefined()
-      expect(schema.marks.strikethrough.spec.toDOM()).toEqual(['s', 0])
+    it('should have basic marks available', () => {
+      expect(schema.marks.strong).toBeDefined()
+      expect(schema.marks.em).toBeDefined()
+      expect(schema.nodes.heading).toBeDefined()
     })
   })
 

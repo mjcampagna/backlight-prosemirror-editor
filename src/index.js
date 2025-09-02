@@ -1,7 +1,6 @@
 import { EditorState } from "prosemirror-state";
 import { EditorView } from "prosemirror-view";
 import { createMarkdownSystem } from "./markdownSystem.js";
-import { strikethroughExtension } from "./extensions/strikethrough.js";
 
 import buildMarkdownPlugins from "./markdownToolbarPlugin.js";
 import htmlLiteralStylingPlugin from "./htmlLiteralStylingPlugin.js";
@@ -98,8 +97,10 @@ class ProseMirrorView {
       this._ownsMirror = true;
     }
 
-    // Create markdown system with extensions
-    const markdownSystem = createMarkdownSystem([strikethroughExtension]);
+    // Create markdown system with extensions and text processing
+    const markdownSystem = createMarkdownSystem([], {
+      // textProcessing: presets.disabled() // To disable tilde unescaping
+    });
     const { schema, mdParser, mdSerializer, keymapPlugins } = markdownSystem;
     
     // Store serializer for later use

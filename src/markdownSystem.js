@@ -9,6 +9,7 @@ import {
   MarkdownSerializer
 } from "prosemirror-markdown";
 import { keymap } from "prosemirror-keymap";
+import defaultTextProcessing from "./plugins/textProcessing.js";
 
 /**
  * Extension shape:
@@ -35,7 +36,7 @@ function extendOrderedMap(om, additions = {}) {
   return out;
 }
 
-export function createMarkdownSystem(extensions = []) {
+export function createMarkdownSystem(extensions = [], options = {}) {
   // 1) Schema
   let nodes = baseSchema.spec.nodes;
   let marks = baseSchema.spec.marks;
@@ -74,7 +75,11 @@ export function createMarkdownSystem(extensions = []) {
     if (ext.md?.toMarkdown?.nodes) Object.assign(nodeSerializers, ext.md.toMarkdown.nodes);
     if (ext.md?.toMarkdown?.marks) Object.assign(markSerializers, ext.md.toMarkdown.marks);
   }
-  const mdSerializer = new MarkdownSerializer(nodeSerializers, markSerializers);
+  let mdSerializer = new MarkdownSerializer(nodeSerializers, markSerializers);
+  
+  // Apply text processing plugin
+  const textProcessingPlugin = options.textProcessing || defaultTextProcessing();
+  mdSerializer = textProcessingPlugin.enhanceSerializer(mdSerializer);
 
   // 4) Optional keymaps from extensions (you can add these to your plugin list)
   const keymapPlugins = [];

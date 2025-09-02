@@ -58,13 +58,40 @@ export const myExtension = {
 };
 ```
 
-## Example: Strikethrough
+## Extension Examples
 
-The included `strikethroughExtension` demonstrates:
-- Custom mark definition
-- Markdown serialization (`~~text~~`)
-- Keyboard shortcut (`Mod-Shift-x`)
+The extension system allows easy addition of custom markdown features. See the source for implementation patterns.
 
-## Available Extensions
+## Creating Extensions
 
-- `strikethroughExtension` - Adds strikethrough support with `~~text~~` syntax and `Cmd+Shift+X` shortcut
+Extensions can include:
+- Custom mark or node definitions  
+- Markdown parsing and serialization
+- Keyboard shortcuts and input rules
+
+## Text Processing Plugin
+
+The text processing plugin handles markdown serialization customization:
+
+```js
+import { createMarkdownSystem } from './markdownSystem.js';
+import { presets } from './plugins/textProcessing.js';
+
+// Default: unescapes tildes
+const system = createMarkdownSystem([]);
+
+// Disabled: keeps all escaping
+const system = createMarkdownSystem([], {
+  textProcessing: presets.disabled()
+});
+
+// Custom: unescape multiple characters
+const system = createMarkdownSystem([], {
+  textProcessing: createTextProcessingPlugin({
+    unescapeChars: ['~', '_'],
+    customReplacements: [
+      { from: '-->', to: '→' }
+    ]
+  })
+});
+```
