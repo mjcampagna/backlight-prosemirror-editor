@@ -46,6 +46,7 @@
 /* Essential toolbar styles */
 .pm-toolbar {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: 6px;
   padding: 6px;
@@ -56,7 +57,6 @@
   position: sticky;
   top: 0;
   z-index: 50;
-  height: 36px;
   min-height: 36px;
   white-space: nowrap;
 }
@@ -75,6 +75,8 @@
   cursor: pointer;
   user-select: none;
   transition: background .15s, border-color .15s, box-shadow .15s;
+  font-size: 0.75rem;
+  font-weight: 600;
 }
 
 .pm-btn:hover {
