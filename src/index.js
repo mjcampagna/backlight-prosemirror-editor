@@ -196,10 +196,19 @@ const labelFor = (mode) => (mode === "markdown" ? "to WYSIWYG" : "to Markdown");
 
 // Wire a single textarea + button
 function wireEditorToggle(ta) {
-  const btn = ta.parentElement?.querySelector("button");
+  let btn = ta.parentElement?.querySelector("button");
   if (!btn) {
-    console.warn("No toggle <button> found next to textarea:", ta);
-    return;
+    // Create toggle button if it doesn't exist
+    btn = document.createElement("button");
+    btn.type = "button";
+    btn.setAttribute("aria-label", "Editor mode");
+    btn.className = "toggle-editor-mode";
+    btn.style.marginBottom = "12px";
+    
+    // Insert before the textarea
+    ta.parentElement.insertBefore(btn, ta);
+    
+    console.log("Created toggle button for textarea");
   }
 
   // Determine starting mode; default to markdown if unknown

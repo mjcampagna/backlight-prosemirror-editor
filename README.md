@@ -23,7 +23,7 @@ npm run test   # Run tests
 
 ### Basic Usage
 
-The editor requires explicit initialization on `<textarea class="prosemirror-enabled">` elements with a toggle button for switching modes.
+The editor requires explicit initialization on `<textarea class="prosemirror-enabled">` elements. A toggle button for switching modes will be auto-created if one doesn't exist.
 
 ```html
 <head>
@@ -32,7 +32,7 @@ The editor requires explicit initialization on `<textarea class="prosemirror-ena
 </head>
 <body>
   <div>
-    <button>Toggle Mode</button>
+    <!-- Button is optional - will be auto-created if missing -->
     <textarea class="prosemirror-enabled">
 # Hello World
 
