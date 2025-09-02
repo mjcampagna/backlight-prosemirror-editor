@@ -185,7 +185,7 @@ export function markdownToolbarPlugin(options = {}) {
             isActive: (s) => isBlockActive(s, schema.nodes.code_block),
           }),
           makeBtn({
-            label: "Code (single)",
+            label: "<*>",
             title: "Flatten to one code block",
             run: run(cmdSingle),
           })
