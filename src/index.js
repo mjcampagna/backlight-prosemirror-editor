@@ -6,6 +6,7 @@ import { enhancedLinkExtension } from "./extensions/enhancedLink.js";
 import buildMarkdownPlugins from "./markdownToolbarPlugin.js";
 import htmlLiteralStylingPlugin from "./htmlLiteralStylingPlugin.js";
 import { createTableRowStylingPlugin } from "./patternNodeStylingPlugin.js";
+import { createTableRowTextProcessingPlugin } from "./patternTextProcessingPlugin.js";
 import { presets } from "./plugins/textProcessing.js";
 
 // --- Active-editor registry (works even with multiple editors) ---
@@ -102,7 +103,7 @@ class ProseMirrorView {
 
     // Create markdown system with extensions and text processing
     const markdownSystem = createMarkdownSystem([enhancedLinkExtension], {
-      // textProcessing: presets.disabled() // To disable unescaping of special characters
+      textProcessing: createTableRowTextProcessingPlugin() // Enable pattern-based text processing
     });
     const { schema, mdParser, mdSerializer, keymapPlugins } = markdownSystem;
     

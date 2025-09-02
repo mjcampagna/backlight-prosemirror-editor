@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Pattern Utilities Demo</title>
+  <link rel="stylesheet" href="./dist/prosemirror-bundle.css">
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    textarea {
+      width: 100%;
+      min-height: 200px;
+      font-family: monospace;
+      border: 1px solid #ccc;
+      padding: 10px;
+      margin-bottom: 10px;
+    }
+    .demo-info {
+      background: #f0f8ff;
+      padding: 15px;
+      border-radius: 4px;
+      margin-bottom: 20px;
+      font-size: 0.9em;
+    }
+    .feature-list {
+      background: #f8fff8;
+      padding: 15px;
+      border-radius: 4px;
+      margin-bottom: 20px;
+    }
+    .feature-list h4 {
+      margin-top: 0;
+      color: #2e7d32;
+    }
+  </style>
+</head>
+<body>
+  <h1>Pattern Utilities Demo</h1>
+  
+  <div class="demo-info">
+    <strong>Two New Utilities Working Together:</strong>
+    <br><br>
+    <strong>1. Pattern Node Styling:</strong> Detects lines matching <code>/^\|.*\|\s*$/</code> and applies the <code>pm-table-row</code> CSS class
+    <br>
+    <strong>2. Pattern Text Processing:</strong> Prevents character escaping in matching lines (unescapes |, *, _)
+  </div>
+
+  <div class="feature-list">
+    <h4>✨ What to observe:</h4>
+    <ul>
+      <li><strong>Visual styling:</strong> Table rows have light blue background and blue left border</li>
+      <li><strong>Character preservation:</strong> Switch to markdown mode to see unescaped characters in table rows</li>
+      <li><strong>Selective processing:</strong> Regular paragraphs keep their escaped characters</li>
+      <li><strong>Flexible patterns:</strong> Works with various table row formats</li>
+    </ul>
+  </div>
+
+  <textarea class="prosemirror-enabled">This is a regular paragraph with \\* escaped asterisk.
+
+| Simple \\| table |
+| With \\* asterisk \\_ underscore |
+| Complex \\| table \\* formatting |
+
+Another paragraph with \\* escaped content.
+
+| Final \\| table | row |</textarea>
+
+  <div style="margin-top: 20px; padding: 15px; background: #fff3e0; border-radius: 4px;">
+    <strong>Test Instructions:</strong>
+    <ol>
+      <li>Notice the table rows have blue styling</li>
+      <li>Click the toggle button to switch to Markdown mode</li>
+      <li>Observe that table rows have unescaped characters (|, *, _)</li>
+      <li>Regular paragraphs still have escaped characters</li>
+      <li>Switch back to WYSIWYG mode - everything is preserved</li>
+    </ol>
+  </div>
+
+  <script type="module">
+    import { initProseMirrorEditor } from "./dist/prosemirror-bundle.esm.js";
+    initProseMirrorEditor();
+  </script>
+</body>
+</html>
