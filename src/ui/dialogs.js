@@ -18,16 +18,21 @@ function createModal() {
     }
   });
   
-  // Close on Escape key
-  const handleEscape = (e) => {
-    if (e.key === 'Escape') {
-      closeModal(overlay);
-      document.removeEventListener('keydown', handleEscape);
-    }
-  };
-  document.addEventListener('keydown', handleEscape);
+  // Store escape handler for later access to onCancel callback
+  let escapeHandler = null;
   
-  return { overlay, modal };
+  const setupEscapeHandler = (onCancel) => {
+    escapeHandler = (e) => {
+      if (e.key === 'Escape') {
+        closeModal(overlay);
+        document.removeEventListener('keydown', escapeHandler);
+        if (onCancel) onCancel(); // Call onCancel like Cancel button does
+      }
+    };
+    document.addEventListener('keydown', escapeHandler);
+  };
+  
+  return { overlay, modal, setupEscapeHandler };
 }
 
 function closeModal(overlay) {
@@ -40,7 +45,7 @@ function closeModal(overlay) {
 export function showLinkDialog(options = {}) {
   const { initialUrl = '', initialText = '', onConfirm, onCancel } = options;
   
-  const { overlay, modal } = createModal();
+  const { overlay, modal, setupEscapeHandler } = createModal();
   
   modal.innerHTML = `
     <div class="pm-modal-header">
@@ -104,6 +109,11 @@ export function showLinkDialog(options = {}) {
   // Event listeners
   confirmBtn.addEventListener('click', handleConfirm);
   cancelBtn.addEventListener('click', handleCancel);
+  
+  // Setup escape handler to call onCancel (same as Cancel button)
+  setupEscapeHandler(() => {
+    if (onCancel) onCancel(); // Just call onCancel, closeModal already called by escape handler
+  });
   
   // Enter to confirm, Escape handled by modal
   urlInput.addEventListener('keydown', (e) => {
