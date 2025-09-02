@@ -125,7 +125,7 @@
 }
 
 /* HTML literal extension styling */
-.pm-html-literal {
+.pm-editor-container .pm-html-literal {
   background: transparent;
   color: inherit;
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
