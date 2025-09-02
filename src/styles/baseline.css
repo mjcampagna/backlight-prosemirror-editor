@@ -26,17 +26,17 @@
 }
 
 /* Essential ProseMirror editor styles */
-.ProseMirror {
-  background: var(--pm-editor-bg);
-  border: 1px solid var(--pm-editor-border);
-  border-radius: 8px;
-  min-height: 180px;
-  outline: none;
-  padding: 12px;
+.pm-editor-container .ProseMirror {
+  background: var(--pm-editor-bg) !important;
+  border: 1px solid var(--pm-editor-border) !important;
+  border-radius: 8px !important;
+  min-height: 180px !important;
+  outline: none !important;
+  padding: 12px !important;
 }
 
-.ProseMirror-focused {
-  border-color: var(--pm-editor-border-focus);
+.pm-editor-container .ProseMirror-focused {
+  border-color: var(--pm-editor-border-focus) !important;
 }
 
 .ProseMirror p {
@@ -44,67 +44,67 @@
 }
 
 /* Essential toolbar styles */
-.pm-toolbar {
-  align-items: center;
-  background: var(--pm-toolbar-bg);
-  border: 1px solid var(--pm-toolbar-border);
-  border-bottom: none;
-  border-radius: 8px 8px 0 0;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  min-height: 36px;
-  padding: 6px;
-  position: sticky;
-  top: 0;
-  white-space: nowrap;
-  z-index: 50;
+.pm-editor-container .pm-toolbar {
+  align-items: center !important;
+  background: var(--pm-toolbar-bg) !important;
+  border: 1px solid var(--pm-toolbar-border) !important;
+  border-bottom: none !important;
+  border-radius: 8px 8px 0 0 !important;
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 6px !important;
+  min-height: 36px !important;
+  padding: 6px !important;
+  position: sticky !important;
+  top: 0 !important;
+  white-space: nowrap !important;
+  z-index: 50 !important;
 }
 
-.pm-btn {
-  align-items: center;
-  background: var(--pm-btn-bg);
-  border: 1px solid var(--pm-btn-border);
-  border-radius: 4px;
-  cursor: pointer;
-  display: inline-flex;
-  font: 0.75rem/1 system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
-  font-weight: 600;
-  height: 28px;
-  justify-content: center;
-  min-width: 28px;
-  padding: 0 6px;
-  transition: background .15s, border-color .15s, box-shadow .15s;
-  user-select: none;
+.pm-editor-container .pm-btn {
+  align-items: center !important;
+  background: var(--pm-btn-bg) !important;
+  border: 1px solid var(--pm-btn-border) !important;
+  border-radius: 4px !important;
+  cursor: pointer !important;
+  display: inline-flex !important;
+  font: 14px/1 system-ui, -apple-system, Segoe UI, Roboto, sans-serif !important;
+  height: 28px !important;
+  justify-content: center !important;
+  min-width: 28px !important;
+  padding: 0 6px !important;
+  transition: background .15s, border-color .15s, box-shadow .15s !important;
+  user-select: none !important;
 }
 
-.pm-btn:hover {
-  background: var(--pm-btn-hover-bg);
-  border-color: var(--pm-btn-hover-border);
+.pm-editor-container .pm-btn:hover {
+  background: var(--pm-btn-hover-bg) !important;
+  border-color: var(--pm-btn-hover-border) !important;
 }
 
-.pm-btn.active {
-  background: var(--pm-btn-active-bg);
-  border-color: var(--pm-btn-active-border);
+.pm-editor-container .pm-btn.active {
+  background: var(--pm-btn-active-bg) !important;
+  border-color: var(--pm-btn-active-border) !important;
 }
 
-.pm-btn:disabled {
-  cursor: default;
-  opacity: .45;
+.pm-editor-container .pm-btn:disabled {
+  cursor: default !important;
+  opacity: .45 !important;
 }
 
-.pm-select {
-  display: inline-block;
+.pm-editor-container .pm-select {
+  display: inline-block !important;
 }
 
-.pm-select select {
-  background: var(--pm-select-bg);
-  border: 1px solid var(--pm-select-border);
-  border-radius: 4px;
-  font: 0.75rem/1 system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
-  font-weight: 600;
-  height: 28px;
-  padding: 0 6px;
+.pm-editor-container .pm-select select {
+  background: var(--pm-select-bg) !important;
+  border: 1px solid var(--pm-select-border) !important;
+  border-radius: 4px !important;
+  font: 14px/1 system-ui, -apple-system, Segoe UI, Roboto, sans-serif !important;
+  height: 28px !important;
+  min-width: 80px !important;
+  padding: 0 6px !important;
+  width: auto !important;
 }
 
 /* HTML literal extension styling */
