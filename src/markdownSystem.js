@@ -47,6 +47,10 @@ export function createMarkdownSystem(extensions = []) {
 
   // 2) Markdown-it + from-markdown tokens
   const md = new MarkdownIt("commonmark");
+  
+  // Disable HTML parsing to prevent html_block tokens
+  md.disable(['html_block', 'html_inline']);
+  
   for (const ext of extensions) ext.md?.configureMarkdownIt?.(md);
 
   // Most PM versions expose default tokens here:
@@ -56,13 +60,7 @@ export function createMarkdownSystem(extensions = []) {
     // explicitly pass a full token map. We keep empty as a last resort.
     {};
 
-  const mergedTokens = { 
-    ...baseTokens,
-    // Add support for HTML tokens that markdown-it generates by ignoring them
-    // This prevents the error while preserving content in the source
-    html_block: { ignore: true },
-    html_inline: { ignore: true }
-  };
+  const mergedTokens = { ...baseTokens };
   for (const ext of extensions) {
     if (ext.md?.tokens) Object.assign(mergedTokens, ext.md.tokens);
   }
