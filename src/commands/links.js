@@ -303,11 +303,13 @@ export function createLinkCommand() {
     let linkUrl = "";
     
     // Get current link if editing existing
+    let linkNewWindow = false;
     if (hasLink(state)) {
       const attrs = getLinkAttrs(state);
       if (attrs) {
         linkUrl = attrs.href || "";
         linkText = getLinkText(state);
+        linkNewWindow = attrs.target === "_blank";
       }
     } 
     // Enhancement 1: If cursor is on unlinked word, populate with that word
@@ -333,8 +335,16 @@ export function createLinkCommand() {
       showLinkDialog({
         initialUrl: linkUrl,
         initialText: linkText,
-        onConfirm: ({ text, url }) => {
+        initialNewWindow: linkNewWindow,
+        onConfirm: ({ text, url, newWindow }) => {
           if (!dispatch) return;
+          
+          // Create link attributes
+          const linkAttrs = { href: url };
+          if (newWindow) {
+            linkAttrs.target = "_blank";
+            linkAttrs.rel = "noopener noreferrer";
+          }
           
           let tr = state.tr;
           
@@ -388,21 +398,21 @@ export function createLinkCommand() {
                 // Replace the word with linked text
                 tr = tr.delete(wordStart, wordEnd);
                 tr = tr.insertText(text, wordStart);
-                tr = tr.addMark(wordStart, wordStart + text.length, link.create({ href: url }));
+                tr = tr.addMark(wordStart, wordStart + text.length, link.create(linkAttrs));
               }
             } else if (wordBefore && text === wordBefore) {
               // Similar logic for word before cursor
               // For now, just insert new text (fallback)
-              const linkNode = state.schema.text(text, [link.create({ href: url })]);
+              const linkNode = state.schema.text(text, [link.create(linkAttrs)]);
               tr = tr.replaceSelectionWith(linkNode, false);
             } else {
               // Insert completely new link
-              const linkNode = state.schema.text(text, [link.create({ href: url })]);
+              const linkNode = state.schema.text(text, [link.create(linkAttrs)]);
               tr = tr.replaceSelectionWith(linkNode, false);
             }
           } else {
             // Add link to existing selection
-            tr = tr.addMark(from, to, link.create({ href: url }));
+            tr = tr.addMark(from, to, link.create(linkAttrs));
           }
           
           dispatch(tr);

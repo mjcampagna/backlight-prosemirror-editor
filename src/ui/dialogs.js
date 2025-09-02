@@ -43,7 +43,7 @@ function closeModal(overlay) {
 
 // Link dialog
 export function showLinkDialog(options = {}) {
-  const { initialUrl = '', initialText = '', onConfirm, onCancel } = options;
+  const { initialUrl = '', initialText = '', initialNewWindow = false, onConfirm, onCancel } = options;
   
   const { overlay, modal, setupEscapeHandler } = createModal();
   
@@ -60,6 +60,12 @@ export function showLinkDialog(options = {}) {
         <label for="pm-link-url">URL:</label>
         <input type="url" id="pm-link-url" value="${initialUrl}" placeholder="https://example.com">
       </div>
+      <div class="pm-modal-field">
+        <label class="pm-modal-checkbox">
+          <input type="checkbox" id="pm-link-new-window" ${initialNewWindow ? 'checked' : ''}>
+          Open link in new window
+        </label>
+      </div>
     </div>
     <div class="pm-modal-footer">
       <button type="button" class="pm-modal-btn pm-modal-btn-cancel">Cancel</button>
@@ -69,6 +75,7 @@ export function showLinkDialog(options = {}) {
   
   const textInput = modal.querySelector('#pm-link-text');
   const urlInput = modal.querySelector('#pm-link-url');
+  const newWindowCheckbox = modal.querySelector('#pm-link-new-window');
   const cancelBtn = modal.querySelector('.pm-modal-btn-cancel');
   const confirmBtn = modal.querySelector('.pm-modal-btn-primary');
   
@@ -87,6 +94,7 @@ export function showLinkDialog(options = {}) {
   const handleConfirm = () => {
     const text = textInput.value.trim();
     const url = urlInput.value.trim();
+    const newWindow = newWindowCheckbox.checked;
     
     if (!url) {
       urlInput.focus();
@@ -95,7 +103,7 @@ export function showLinkDialog(options = {}) {
     
     closeModal(overlay);
     if (onConfirm) {
-      onConfirm({ text, url });
+      onConfirm({ text, url, newWindow });
     }
   };
   

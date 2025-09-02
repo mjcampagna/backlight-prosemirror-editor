@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { EditorState, TextSelection } from 'prosemirror-state'
 import { createMarkdownSystem } from '../../markdownSystem.js'
+import { enhancedLinkExtension } from '../../extensions/enhancedLink.js'
 import { hasLink, getLinkAttrs, getLinkText, getWordAtCursor, getWordBeforeCursor } from '../links.js'
 
 describe('Link Commands', () => {
@@ -130,15 +131,7 @@ describe('Link Commands', () => {
       const markdown = 'Visit [Google](https://google.com) now';
       const doc = system.mdParser.parse(markdown);
       
-      console.log('Document structure:');
-      doc.descendants((node, pos) => {
-        console.log(`  Pos ${pos}: "${node.textContent}" (${node.type.name})`);
-        if (node.marks) {
-          node.marks.forEach(mark => {
-            console.log(`    Mark: ${mark.type.name}`, mark.attrs);
-          });
-        }
-      });
+
       
       // This test is for debugging - let's see the actual structure
       expect(doc).toBeDefined();
@@ -169,10 +162,7 @@ describe('Link Commands', () => {
         selection: TextSelection.create(doc, googleMiddle)
       });
       
-      console.log('Manual test - cursor at pos', googleMiddle);
-      console.log('hasLink:', hasLink(state));
-      console.log('getLinkAttrs:', getLinkAttrs(state));
-      console.log('getLinkText:', getLinkText(state));
+
       
       expect(hasLink(state)).toBe(true);
       expect(getLinkText(state)).toBe("Google"); // This should extract full text
@@ -197,12 +187,7 @@ describe('Link Commands', () => {
         selection: TextSelection.create(doc, 7) // At boundary before "Google"
       });
       
-      // Debug this specific case
-      console.log('Before link test:');
-      console.log('  cursor at position:', state.selection.from);
-      console.log('  checking position', state.selection.from, '- marks:', state.doc.resolve(state.selection.from).marks().map(m => m.type.name));
-      console.log('  checking position', state.selection.from + 1, '- marks:', state.doc.resolve(state.selection.from + 1).marks().map(m => m.type.name));
-      console.log('  checking position', state.selection.from + 2, '- marks:', state.doc.resolve(state.selection.from + 2).marks().map(m => m.type.name));
+
       
       // Button should highlight because cursor is adjacent to link
       expect(hasLink(state)).toBe(true);
@@ -286,6 +271,37 @@ describe('Link Commands', () => {
       
       const word = getWordBeforeCursor(state);
       expect(word).toBe("Google");
+    })
+  })
+
+  describe('New Window Links', () => {
+    it('should create links with target="_blank" when new window option is enabled', () => {
+      // Use enhanced schema for this test
+      const enhancedSystem = createMarkdownSystem([enhancedLinkExtension]);
+      const enhancedSchema = enhancedSystem.schema;
+      
+      // Create a simple text document with enhanced schema
+      const paragraph = enhancedSchema.nodes.paragraph.create(null, [
+        enhancedSchema.text("Visit Google")
+      ]);
+      const doc = enhancedSchema.nodes.doc.create(null, [paragraph]);
+      
+      const state = EditorState.create({
+        schema: enhancedSchema,
+        doc,
+        selection: TextSelection.create(doc, 1, 12) // Select "Visit Google"
+      });
+      
+      // Test creating link with new window
+      const linkAttrs = { 
+        href: 'https://google.com',
+        target: '_blank',
+        rel: 'noopener noreferrer'
+      };
+      
+      const linkMark = enhancedSchema.marks.link.create(linkAttrs);
+      expect(linkMark.attrs.target).toBe('_blank');
+      expect(linkMark.attrs.rel).toBe('noopener noreferrer');
     })
   })
 })

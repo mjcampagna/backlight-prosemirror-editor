@@ -1,6 +1,7 @@
 import { EditorState } from "prosemirror-state";
 import { EditorView } from "prosemirror-view";
 import { createMarkdownSystem } from "./markdownSystem.js";
+import { enhancedLinkExtension } from "./extensions/enhancedLink.js";
 
 import buildMarkdownPlugins from "./markdownToolbarPlugin.js";
 import htmlLiteralStylingPlugin from "./htmlLiteralStylingPlugin.js";
@@ -99,7 +100,7 @@ class ProseMirrorView {
     }
 
     // Create markdown system with extensions and text processing
-    const markdownSystem = createMarkdownSystem([], {
+    const markdownSystem = createMarkdownSystem([enhancedLinkExtension], {
       // textProcessing: presets.disabled() // To disable unescaping of special characters
     });
     const { schema, mdParser, mdSerializer, keymapPlugins } = markdownSystem;
