@@ -47,6 +47,19 @@ The ProseMirror editor uses CSS variables for easy theming and customization.
 }
 ```
 
+### Content Styling Variables
+```css
+:root {
+  --pm-blockquote-border: #ddd;       /* Blockquote left border */
+  --pm-blockquote-bg: #f9f9f9;        /* Blockquote background */
+  --pm-blockquote-color: inherit;     /* Blockquote text color */
+  --pm-code-bg: #f4f4f4;              /* Inline code background */
+  --pm-code-color: #333;              /* Inline code text color */
+  --pm-code-block-bg: #f8f8f8;        /* Code block background */
+  --pm-code-block-color: #333;        /* Code block text color */
+}
+```
+
 ## Usage Examples
 
 ### Dark Theme
@@ -74,6 +87,14 @@ The ProseMirror editor uses CSS variables for easy theming and customization.
   --pm-select-bg: #333;
   --pm-select-border: #555;
   --pm-select-color: #e0e0e0;
+  
+  --pm-blockquote-border: #555;
+  --pm-blockquote-bg: #2a2a2a;
+  --pm-blockquote-color: #ccc;
+  --pm-code-bg: #333;
+  --pm-code-color: #e0e0e0;
+  --pm-code-block-bg: #2a2a2a;
+  --pm-code-block-color: #e0e0e0;
 }
 
 /* Additional text colors for dark theme */

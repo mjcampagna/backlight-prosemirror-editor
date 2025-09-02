@@ -29,6 +29,15 @@
   --pm-select-bg: #fff;
   --pm-select-border: #ccc;
   --pm-select-color: #333;
+  
+  /* Content styling colors */
+  --pm-blockquote-border: #ddd;
+  --pm-blockquote-bg: transparent;
+  --pm-blockquote-color: inherit;
+  --pm-code-bg: #f4f4f4;
+  --pm-code-color: #333;
+  --pm-code-block-bg: #f8f8f8;
+  --pm-code-block-color: #333;
 }
 
 /* Essential ProseMirror editor styles */
@@ -125,6 +134,47 @@
   min-width: 80px;
   padding: 0 6px;
   width: auto;
+}
+
+/* Content element styling */
+.pm-editor-container blockquote {
+  background: var(--pm-blockquote-bg);
+  border-left: 4px solid var(--pm-blockquote-border);
+  border-radius: 2px;
+  color: var(--pm-blockquote-color);
+  margin: 16px 0;
+  padding: 3px 18px;
+}
+
+.pm-editor-container blockquote > *:last-child {
+  margin-bottom: 0;
+}
+
+.pm-editor-container pre {
+  background: var(--pm-code-block-bg);
+  border-radius: 4px;
+  color: var(--pm-code-block-color);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  margin: 16px 0;
+  overflow-x: auto;
+  padding: 12px;
+  white-space: pre-wrap;
+}
+
+.pm-editor-container code {
+  background: var(--pm-code-bg);
+  border-radius: 3px;
+  color: var(--pm-code-color);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 0.9em;
+  padding: 2px 6px;
+}
+
+/* Prevent double styling for code inside pre */
+.pm-editor-container pre code {
+  background: transparent;
+  border-radius: 0;
+  padding: 0;
 }
 
 /* HTML literal extension styling */
