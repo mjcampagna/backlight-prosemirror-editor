@@ -190,11 +190,11 @@ describe('Link Commands', () => {
       ]);
       const doc = schema.nodes.doc.create(null, [paragraph]);
       
-      // Cursor immediately before "G" in "Google" (position 6, right after "Visit ")
+      // Cursor immediately before "G" in "Google" (position 7, at start of "Google" text node)
       const state = EditorState.create({
         schema,
         doc,
-        selection: TextSelection.create(doc, 6) // Right before "Google"
+        selection: TextSelection.create(doc, 7) // At boundary before "Google"
       });
       
       // Debug this specific case
