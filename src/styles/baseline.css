@@ -38,6 +38,11 @@
   --pm-code-color: #333;
   --pm-code-block-bg: #f8f8f8;
   --pm-code-block-color: #333;
+  --pm-html-literal-bg: transparent;
+  --pm-html-literal-border: #dceecc;
+  --pm-html-literal-color: inherit;
+  --pm-html-literal-font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  --pm-html-literal-font-size: 0.875em;
 }
 
 /* Essential ProseMirror editor styles */
@@ -179,8 +184,12 @@
 
 /* HTML literal extension styling */
 .pm-editor-container .pm-html-literal {
-  background: transparent;
-  color: inherit;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  background: var(--pm-html-literal-bg);
+  border-left: 4px solid var(--pm-html-literal-border);
+  color: var(--pm-html-literal-color);
+  font-family: var(--pm-html-literal-font-family);
+  font-size: var(--pm-html-literal-font-size);
+  margin: 16px 0;
+  padding: 3px 18px;
   white-space: pre-wrap;
 }
