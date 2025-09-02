@@ -27,12 +27,12 @@
 
 /* Essential ProseMirror editor styles */
 .ProseMirror {
+  background: var(--pm-editor-bg);
   border: 1px solid var(--pm-editor-border);
   border-radius: 8px;
-  padding: 12px;
   min-height: 180px;
   outline: none;
-  background: var(--pm-editor-bg);
+  padding: 12px;
 }
 
 .ProseMirror-focused {
@@ -45,38 +45,38 @@
 
 /* Essential toolbar styles */
 .pm-toolbar {
-  display: flex;
-  flex-wrap: wrap;
   align-items: center;
-  gap: 6px;
-  padding: 6px;
   background: var(--pm-toolbar-bg);
   border: 1px solid var(--pm-toolbar-border);
   border-bottom: none;
   border-radius: 8px 8px 0 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  min-height: 36px;
+  padding: 6px;
   position: sticky;
   top: 0;
-  z-index: 50;
-  min-height: 36px;
   white-space: nowrap;
+  z-index: 50;
 }
 
 .pm-btn {
-  display: inline-flex;
   align-items: center;
-  justify-content: center;
-  height: 28px;
-  min-width: 28px;
-  padding: 0 8px;
-  font: 14px/1 system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
   background: var(--pm-btn-bg);
   border: 1px solid var(--pm-btn-border);
   border-radius: 4px;
   cursor: pointer;
-  user-select: none;
-  transition: background .15s, border-color .15s, box-shadow .15s;
+  display: inline-flex;
+  font: 14px/1 system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
   font-size: 0.75rem;
   font-weight: 600;
+  height: 28px;
+  justify-content: center;
+  min-width: 28px;
+  padding: 0 8px;
+  transition: background .15s, border-color .15s, box-shadow .15s;
+  user-select: none;
 }
 
 .pm-btn:hover {
@@ -90,8 +90,8 @@
 }
 
 .pm-btn:disabled {
-  opacity: .45;
   cursor: default;
+  opacity: .45;
 }
 
 .pm-select {
@@ -99,18 +99,18 @@
 }
 
 .pm-select select {
-  height: 28px;
+  background: var(--pm-select-bg);
   border: 1px solid var(--pm-select-border);
   border-radius: 4px;
-  background: var(--pm-select-bg);
   font: 14px/1 system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  height: 28px;
   padding: 0 6px;
 }
 
 /* HTML literal extension styling */
 .pm-html-literal {
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   background: transparent;
   color: inherit;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   white-space: pre-wrap;
 }

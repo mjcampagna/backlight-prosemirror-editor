@@ -2,13 +2,13 @@
 
 /* Demo editor layout (NOT consumer styles) */
 .editor-wrap {
-  max-width: 700px;
   margin: 20px auto;
+  max-width: 700px;
 }
 
 .toolbar-hint {
-  font: 14px/1.4 system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
   color: #444;
+  font: 14px/1.4 system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
   margin-bottom: 8px;
 }
 
@@ -20,21 +20,21 @@ textarea {
 
 /* Legacy menubar styles (if using prosemirror-example-setup) */
 .ProseMirror-menubar {
-  display: flex;
   align-items: center;
-  gap: 4px;
-  padding: 4px 6px;
   background: #f8f8f8;
   border: 1px solid #ddd;
   border-bottom: none;
   border-radius: 8px 8px 0 0;
   box-shadow: inset 0 -1px 0 #e0e0e0;
-  position: sticky;
-  top: 0;
-  z-index: 50;
-  white-space: nowrap;
+  display: flex;
+  gap: 4px;
   height: 36px;
   min-height: 36px;
+  padding: 4px 6px;
+  position: sticky;
+  top: 0;
+  white-space: nowrap;
+  z-index: 50;
 }
 
 .ProseMirror-menubar .ProseMirror-menuitem-group {
@@ -43,19 +43,19 @@ textarea {
 }
 
 .ProseMirror-menubar .ProseMirror-menuitem {
-  display: inline-flex;
   align-items: center;
-  justify-content: center;
-  height: 28px;
-  min-width: 28px;
-  padding: 0 8px;
-  font: 14px/1 system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
   background: #fff;
   border: 1px solid #ccc;
   border-radius: 4px;
   cursor: pointer;
-  user-select: none;
+  display: inline-flex;
+  font: 14px/1 system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  height: 28px;
+  justify-content: center;
+  min-width: 28px;
+  padding: 0 8px;
   transition: background .15s, border-color .15s, box-shadow .15s;
+  user-select: none;
 }
 
 .ProseMirror-menubar .ProseMirror-menuitem:hover {
