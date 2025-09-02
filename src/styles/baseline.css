@@ -48,6 +48,16 @@
   --pm-link-color: #0066cc;
   --pm-link-color-hover: #0052a3;
   --pm-link-color-visited: #6633cc;
+  
+  /* Modal colors */
+  --pm-modal-overlay-bg: rgba(0, 0, 0, 0.5);
+  --pm-modal-bg: #fff;
+  --pm-modal-border: #ddd;
+  --pm-modal-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  --pm-modal-input-border: #ccc;
+  --pm-modal-input-border-focus: #4285f4;
+  --pm-modal-btn-primary-bg: #2196F3;
+  --pm-modal-btn-primary-bg-hover: #1565C0;
 }
 
 /* Essential ProseMirror editor styles */
@@ -199,6 +209,111 @@
 
 .pm-editor-container a:visited {
   color: var(--pm-link-color-visited);
+}
+
+/* Modal dialog styles */
+.pm-modal-overlay {
+  background: var(--pm-modal-overlay-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1000;
+}
+
+.pm-modal {
+  background: var(--pm-modal-bg);
+  border: 1px solid var(--pm-modal-border);
+  border-radius: 8px;
+  box-shadow: var(--pm-modal-shadow);
+  max-width: 400px;
+  width: 90%;
+}
+
+.pm-modal-header {
+  border-bottom: 1px solid var(--pm-modal-border);
+  padding: 16px 20px;
+}
+
+.pm-modal-header h3 {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.pm-modal-body {
+  padding: 20px;
+}
+
+.pm-modal-field {
+  margin-bottom: 16px;
+}
+
+.pm-modal-field:last-child {
+  margin-bottom: 0;
+}
+
+.pm-modal-field label {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 6px;
+}
+
+.pm-modal-field input {
+  border: 1px solid var(--pm-modal-input-border);
+  border-radius: 4px;
+  box-sizing: border-box;
+  font-size: 14px;
+  padding: 8px 12px;
+  width: 100%;
+}
+
+.pm-modal-field input:focus {
+  border-color: var(--pm-modal-input-border-focus);
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(66, 133, 244, 0.2);
+}
+
+.pm-modal-footer {
+  border-top: 1px solid var(--pm-modal-border);
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  padding: 16px 20px;
+}
+
+.pm-modal-btn {
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 8px 16px;
+  border: 1px solid transparent;
+}
+
+.pm-modal-btn-cancel {
+  background: transparent;
+  border-color: var(--pm-modal-border);
+  color: #666;
+}
+
+.pm-modal-btn-cancel:hover {
+  background: #f5f5f5;
+}
+
+.pm-modal-btn-primary {
+  background: var(--pm-modal-btn-primary-bg);
+  border-color: var(--pm-modal-btn-primary-bg);
+  color: white;
+}
+
+.pm-modal-btn-primary:hover {
+  background: var(--pm-modal-btn-primary-bg-hover);
 }
 
 /* HTML literal extension styling */
