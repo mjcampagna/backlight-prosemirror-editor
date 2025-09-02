@@ -4,6 +4,7 @@ import { createMarkdownSystem } from "./markdownSystem.js";
 
 import buildMarkdownPlugins from "./markdownToolbarPlugin.js";
 import htmlLiteralStylingPlugin from "./htmlLiteralStylingPlugin.js";
+import { presets } from "./plugins/textProcessing.js";
 
 // --- Active-editor registry (works even with multiple editors) ---
 const REGISTRY_KEY = Symbol.for("app/active-editor-registry");
@@ -99,7 +100,7 @@ class ProseMirrorView {
 
     // Create markdown system with extensions and text processing
     const markdownSystem = createMarkdownSystem([], {
-      // textProcessing: presets.disabled() // To disable tilde unescaping
+      textProcessing: presets.disabled() // To disable unescaping of special characters
     });
     const { schema, mdParser, mdSerializer, keymapPlugins } = markdownSystem;
     
