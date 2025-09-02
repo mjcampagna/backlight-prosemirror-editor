@@ -36,10 +36,13 @@
   background: var(--pm-editor-bg);
   border: 1px solid var(--pm-editor-border);
   border-radius: 8px;
+  border-bottom-right-radius: 4px;
   color: var(--pm-editor-color);
   min-height: 180px;
   outline: none;
+  overflow: auto;
   padding: 12px;
+  resize: vertical;
 }
 
 .pm-editor-container .ProseMirror-focused {
