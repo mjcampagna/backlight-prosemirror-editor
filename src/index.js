@@ -207,8 +207,6 @@ function wireEditorToggle(ta) {
     
     // Insert before the textarea
     ta.parentElement.insertBefore(btn, ta);
-    
-    console.log("Created toggle button for textarea");
   }
 
   // Determine starting mode; default to markdown if unknown
