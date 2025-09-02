@@ -106,7 +106,7 @@ Customize colors using CSS variables:
 ```css
 :root {
   --pm-editor-bg: #f9f9f9;
-  --pm-btn-active-bg: #your-brand-color;
+  --pm-btn-bg-active: #your-brand-color;
   --pm-toolbar-bg: #your-background;
 }
 ```

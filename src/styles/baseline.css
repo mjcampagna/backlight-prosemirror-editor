@@ -7,6 +7,7 @@
   --pm-editor-border: #ddd;
   --pm-editor-border-focus: #999;
   --pm-editor-bg: #fff;
+  --pm-editor-color: #000;
   
   /* Toolbar colors */
   --pm-toolbar-bg: #f8f8f8;
@@ -15,28 +16,34 @@
   /* Button colors */
   --pm-btn-bg: #fff;
   --pm-btn-border: #ccc;
-  --pm-btn-hover-bg: #f2f2f2;
-  --pm-btn-hover-border: #bbb;
-  --pm-btn-active-bg: #e8f0fe;
-  --pm-btn-active-border: #4285f4;
+  --pm-btn-color: #333;
+  --pm-btn-bg-hover: #f2f2f2;
+  --pm-btn-border-hover: #bbb;
+  --pm-btn-color-hover: #333;
+  --pm-btn-bg-active: #e8f0fe;
+  --pm-btn-border-active: #4285f4;
+  --pm-btn-color-active: #333;
+  --pm-btn-color-disabled: #999;
   
   /* Select colors */
   --pm-select-bg: #fff;
   --pm-select-border: #ccc;
+  --pm-select-color: #333;
 }
 
 /* Essential ProseMirror editor styles */
 .pm-editor-container .ProseMirror {
-  background: var(--pm-editor-bg) !important;
-  border: 1px solid var(--pm-editor-border) !important;
-  border-radius: 8px !important;
-  min-height: 180px !important;
-  outline: none !important;
-  padding: 12px !important;
+  background: var(--pm-editor-bg);
+  border: 1px solid var(--pm-editor-border);
+  border-radius: 8px;
+  color: var(--pm-editor-color);
+  min-height: 180px;
+  outline: none;
+  padding: 12px;
 }
 
 .pm-editor-container .ProseMirror-focused {
-  border-color: var(--pm-editor-border-focus) !important;
+  border-color: var(--pm-editor-border-focus);
 }
 
 .ProseMirror p {
@@ -45,66 +52,76 @@
 
 /* Essential toolbar styles */
 .pm-editor-container .pm-toolbar {
-  align-items: center !important;
-  background: var(--pm-toolbar-bg) !important;
-  border: 1px solid var(--pm-toolbar-border) !important;
-  border-bottom: none !important;
-  border-radius: 8px 8px 0 0 !important;
-  display: flex !important;
-  flex-wrap: wrap !important;
-  gap: 6px !important;
-  min-height: 36px !important;
-  padding: 6px !important;
-  position: sticky !important;
-  top: 0 !important;
-  white-space: nowrap !important;
-  z-index: 50 !important;
+  align-items: center;
+  background: var(--pm-toolbar-bg);
+  border: 1px solid var(--pm-toolbar-border);
+  border-bottom: none;
+  border-radius: 8px 8px 0 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  min-height: 36px;
+  padding: 6px;
+  position: sticky;
+  top: 0;
+  white-space: nowrap;
+  z-index: 50;
 }
 
 .pm-editor-container .pm-btn {
-  align-items: center !important;
-  background: var(--pm-btn-bg) !important;
-  border: 1px solid var(--pm-btn-border) !important;
-  border-radius: 4px !important;
-  cursor: pointer !important;
-  display: inline-flex !important;
-  font: 14px/1 system-ui, -apple-system, Segoe UI, Roboto, sans-serif !important;
-  height: 28px !important;
-  justify-content: center !important;
-  min-width: 28px !important;
-  padding: 0 6px !important;
-  transition: background .15s, border-color .15s, box-shadow .15s !important;
-  user-select: none !important;
+  align-items: center;
+  background: var(--pm-btn-bg);
+  border: 1px solid var(--pm-btn-border);
+  border-radius: 4px;
+  color: var(--pm-btn-color);
+  cursor: pointer;
+  display: inline-flex;
+  font: 13px/1 system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  font-weight: 600;
+  height: 28px;
+  justify-content: center;
+  margin: 0;
+  min-width: 28px;
+  padding: 0 6px;
+  transition: background .15s, border-color .15s, color .15s;
+  user-select: none;
 }
 
 .pm-editor-container .pm-btn:hover {
-  background: var(--pm-btn-hover-bg) !important;
-  border-color: var(--pm-btn-hover-border) !important;
+  background: var(--pm-btn-bg-hover);
+  border-color: var(--pm-btn-border-hover);
+  color: var(--pm-btn-color-hover);
 }
 
 .pm-editor-container .pm-btn.active {
-  background: var(--pm-btn-active-bg) !important;
-  border-color: var(--pm-btn-active-border) !important;
+  background: var(--pm-btn-bg-active);
+  border-color: var(--pm-btn-border-active);
+  color: var(--pm-btn-color-active);
 }
 
 .pm-editor-container .pm-btn:disabled {
-  cursor: default !important;
-  opacity: .45 !important;
+  color: var(--pm-btn-color-disabled);
+  cursor: default;
+  opacity: .45;
 }
 
 .pm-editor-container .pm-select {
-  display: inline-block !important;
+  display: inline-block;
+  margin: 0;
 }
 
 .pm-editor-container .pm-select select {
-  background: var(--pm-select-bg) !important;
-  border: 1px solid var(--pm-select-border) !important;
-  border-radius: 4px !important;
-  font: 14px/1 system-ui, -apple-system, Segoe UI, Roboto, sans-serif !important;
-  height: 28px !important;
-  min-width: 80px !important;
-  padding: 0 6px !important;
-  width: auto !important;
+  background: var(--pm-select-bg);
+  border: 1px solid var(--pm-select-border);
+  border-radius: 4px;
+  color: var(--pm-select-color);
+  font: 13px/1 system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  font-weight: 600;
+  height: 28px;
+  margin: 0;
+  min-width: 80px;
+  padding: 0 6px;
+  width: auto;
 }
 
 /* HTML literal extension styling */
