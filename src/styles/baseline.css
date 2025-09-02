@@ -340,3 +340,18 @@
   padding: 3px 18px;
   white-space: pre-wrap;
 }
+
+/* Table row pattern styling */
+.pm-editor-container .pm-table-row {
+  --pm-table-bg: var(--pm-table-row-bg, #f8f9ff);
+  --pm-table-border: var(--pm-table-row-border, #4a90e2);
+  --pm-table-color: var(--pm-table-row-color, inherit);
+  
+  background: var(--pm-table-bg);
+  color: var(--pm-table-color);
+  border-left: 3px solid var(--pm-table-border);
+  padding: 0.5em 0.8em;
+  margin: 0.25em 0;
+  font-family: var(--pm-code-font, 'Monaco', 'Menlo', 'Ubuntu Mono', monospace);
+  border-radius: 3px;
+}
