@@ -5,6 +5,7 @@ import { enhancedLinkExtension } from "./extensions/enhancedLink.js";
 
 import buildMarkdownPlugins from "./markdownToolbarPlugin.js";
 import htmlLiteralStylingPlugin from "./htmlLiteralStylingPlugin.js";
+import { createTableRowStylingPlugin } from "./patternNodeStylingPlugin.js";
 import { presets } from "./plugins/textProcessing.js";
 
 // --- Active-editor registry (works even with multiple editors) ---
@@ -117,6 +118,7 @@ class ProseMirrorView {
           ...buildMarkdownPlugins(schema, { codeJoinMode: "smart" }),
           ...keymapPlugins,
           htmlLiteralStylingPlugin({ className: "pm-html-literal" }),
+          createTableRowStylingPlugin({ className: "pm-table-row" }),
         ],
       }),
       dispatchTransaction: (tr) => {
