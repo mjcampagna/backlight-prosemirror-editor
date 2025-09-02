@@ -9,6 +9,7 @@
 		"build:js": "vite build",
 		"build:debug": "VITE_SOURCEMAP=true npm run build:js",
 		"build:css": "node scripts/build-css.cjs",
+		"copy:backlight:matt": "cp dist/prosemirror-bundle.css ~/Code/backlight/src/backlight/modules/module-admin/lib/css/ && cp dist/prosemirror-bundle.iife.js ~/Code/backlight/src/backlight/modules/module-admin/lib/js/",
 		"serve": "vite preview",
 		"test": "vitest",
 		"test:ui": "vitest --ui",
