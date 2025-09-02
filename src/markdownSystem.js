@@ -58,17 +58,10 @@ export function createMarkdownSystem(extensions = []) {
 
   const mergedTokens = { 
     ...baseTokens,
-    // Add support for HTML tokens that markdown-it generates
-    // Preserve HTML blocks as paragraphs with literal content
-    html_block: { 
-      block: "paragraph",
-      getContent(tok, schema) {
-        return Fragment.from(schema.text(tok.content));
-      }
-    },
-    html_inline: { 
-      mark: "code"
-    }
+    // Add support for HTML tokens that markdown-it generates by ignoring them
+    // This prevents the error while preserving content in the source
+    html_block: { ignore: true },
+    html_inline: { ignore: true }
   };
   for (const ext of extensions) {
     if (ext.md?.tokens) Object.assign(mergedTokens, ext.md.tokens);
