@@ -43,6 +43,11 @@
   --pm-html-literal-color: inherit;
   --pm-html-literal-font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   --pm-html-literal-font-size: 0.875em;
+  
+  /* Link colors */
+  --pm-link-color: #0066cc;
+  --pm-link-color-hover: #0052a3;
+  --pm-link-color-visited: #6633cc;
 }
 
 /* Essential ProseMirror editor styles */
@@ -180,6 +185,20 @@
   background: transparent;
   border-radius: 0;
   padding: 0;
+}
+
+/* Link styling */
+.pm-editor-container a {
+  color: var(--pm-link-color);
+  text-decoration: underline;
+}
+
+.pm-editor-container a:hover {
+  color: var(--pm-link-color-hover);
+}
+
+.pm-editor-container a:visited {
+  color: var(--pm-link-color-visited);
 }
 
 /* HTML literal extension styling */

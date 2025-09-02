@@ -9,12 +9,14 @@ import { sinkListItem, liftListItem, splitListItem } from "prosemirror-schema-li
 import { isMarkActive, isBlockActive, selectionAllInAncestorType } from "./utils/selection.js";
 import { makeBtn, makeSelect } from "./ui/builders.js";
 import { applyListUnified, applyBlockquoteUnified, applyCodeBlockUnified, applyCodeBlockUnifiedSingle, outdentCommand } from "./commands/unified.js";
+import { hasLink, createLinkCommand, removeLink } from "./commands/links.js";
 
 export function createMarkdownKeymap(schema) {
   const bind = {};
   if (schema.marks.strong) bind["Mod-b"] = toggleMark(schema.marks.strong);
   if (schema.marks.em) bind["Mod-i"] = toggleMark(schema.marks.em);
   if (schema.marks.code) bind["Mod-`"] = toggleMark(schema.marks.code);
+  if (schema.marks.link) bind["Mod-k"] = createLinkCommand();
 
   if (schema.nodes.paragraph) bind["Shift-Ctrl-0"] = setBlockType(schema.nodes.paragraph);
   if (schema.nodes.heading) {
@@ -89,6 +91,12 @@ export function markdownToolbarPlugin(options = {}) {
         run: run(toggleMark(schema.marks.code)),
         isActive: (s) => isMarkActive(s, schema.marks.code),
         isEnabled: can(toggleMark(schema.marks.code))
+      }));
+      if (schema.marks.link) items.push(makeBtn({
+        label: "Link", title: "Link (Mod-K)",
+        run: (view) => createLinkCommand()(view.state, view.dispatch, view),
+        isActive: (s) => hasLink(s),
+        isEnabled: () => true
       }));
 
       if (schema.nodes.paragraph && schema.nodes.heading) {
