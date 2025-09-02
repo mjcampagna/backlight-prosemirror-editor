@@ -7,6 +7,7 @@
 		"dev": "vite",
 		"build": "npm run build:js && npm run build:css",
 		"build:js": "vite build",
+		"build:debug": "VITE_SOURCEMAP=true npm run build:js",
 		"build:css": "node scripts/build-css.cjs",
 		"serve": "vite preview",
 		"test": "vitest",

@@ -4,7 +4,8 @@
 
 ### Development
 - `npm run dev` - Start development server with HMR
-- `npm run build` - Build production bundle (JS + CSS)
+- `npm run build` - Build production bundle (JS + CSS, no source maps)
+- `npm run build:debug` - Build with source maps for debugging
 - `npm run serve` - Preview production build
 
 ### Testing Different Styles

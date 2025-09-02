@@ -6,7 +6,7 @@ export default defineConfig({
     open: true
   },
   build: {
-    sourcemap: true,
+    sourcemap: process.env.VITE_SOURCEMAP === 'true',
     minify: true,
     lib: {
       entry: "src/index.js",
