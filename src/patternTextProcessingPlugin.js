@@ -1,5 +1,5 @@
 // Pattern-based text processing plugin for conditional character unescaping
-import { createSafeRegexTester, TABLE_ROW_PATTERN, getUnescapeRegex, isTableRowText } from "./utils/patternUtils.js";
+import { createSafeRegexTester, TABLE_ROW_PATTERN, getUnescapeRegex, getDoubleUnescapeRegex, isTableRowText } from "./utils/patternUtils.js";
 
 /**
  * Creates a text processing plugin that conditionally unescapes characters
@@ -31,6 +31,7 @@ export function createPatternTextProcessingPlugin(options = {}) {
   const safePatternTest = createSafeRegexTester(pattern);
   const globalUnescapeRegexes = globalUnescapeChars.map(getUnescapeRegex);
   const patternUnescapeRegexes = unescapeChars.map(getUnescapeRegex);
+  const patternDoubleUnescapeRegexes = unescapeChars.map(getDoubleUnescapeRegex);
 
   return {
     name: "patternTextProcessing",
@@ -64,10 +65,15 @@ export function createPatternTextProcessingPlugin(options = {}) {
             let processedLine = line;
             
             // Unescape specified characters in matching lines using pre-compiled regexes
+            // Handle both single and double escaping
             for (let j = 0; j < unescapeChars.length; j++) {
               const char = unescapeChars[j];
-              const regex = patternUnescapeRegexes[j];
-              processedLine = processedLine.replace(regex, char);
+              const doubleRegex = patternDoubleUnescapeRegexes[j];
+              const singleRegex = patternUnescapeRegexes[j];
+              
+              // First handle double escapes (\\|), then single escapes (\|)
+              processedLine = processedLine.replace(doubleRegex, char);
+              processedLine = processedLine.replace(singleRegex, char);
             }
             
             // Apply custom replacements to matching lines
@@ -129,20 +135,9 @@ export function createTableRowTextProcessingPlugin(options = {}) {
       enhancedSerializer.serialize = function(content, options) {
         let result = originalSerialize(content, options);
         
-        // Convert soft breaks in table rows to actual line breaks
-        // Look for table content that has soft breaks (\\) and convert to line breaks
+        // Convert hard breaks within table content to actual line breaks in markdown
+        // This specifically handles the \\ + \n pattern from ProseMirror hard breaks
         result = result.replace(/(\|[^|\n]*)\\\n([^|\n]*\|)/g, '$1\n$2');
-        
-        // Remove extra line breaks between consecutive table rows
-        // This regex looks for table rows separated by double line breaks and makes them single
-        result = result.replace(/(\|.*\|\s*)\n\n(\|.*\|\s*)/g, '$1\n$2');
-        
-        // Continue collapsing multiple consecutive table rows
-        let prevResult;
-        do {
-          prevResult = result;
-          result = result.replace(/(\|.*\|\s*)\n\n(\|.*\|\s*)/g, '$1\n$2');
-        } while (result !== prevResult);
         
         return result;
       };

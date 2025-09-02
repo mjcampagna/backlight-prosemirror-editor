@@ -23,17 +23,18 @@ describe('Double Pipe Handling', () => {
     expect(serialized).toContain('Data 1');
   });
 
-  it('should split table rows into separate paragraphs', () => {
+  it('should combine table rows into single paragraph with line breaks', () => {
     const markdown = `| Normal | Table |
 | Content | Here |`;
     
     const doc = mdParser.parse(markdown);
     const serialized = mdSerializer.serialize(doc);
     
-    // With table row splitting extension: each table row becomes a separate paragraph
-    expect(doc.childCount).toBe(2);
+    // With table row extension: table rows become single paragraph with internal line breaks
+    expect(doc.childCount).toBe(1);
     expect(doc.firstChild.type.name).toBe('paragraph');
-    expect(doc.lastChild.type.name).toBe('paragraph');
+    
+    // But should serialize back to separate lines
     expect(serialized.trim()).toBe('| Normal | Table |\n| Content | Here |');
   });
 
@@ -55,16 +56,17 @@ describe('Double Pipe Handling', () => {
     const doc = mdParser.parse(markdown);
     const serialized = mdSerializer.serialize(doc);
     
-    // Should split into separate paragraphs and maintain table structure
-    expect(doc.childCount).toBe(4);
+    // Should create single paragraph with internal line breaks in editor
+    expect(doc.childCount).toBe(1);
+    expect(doc.firstChild.type.name).toBe('paragraph');
     
-    // Check that each line is properly preserved (allowing for trailing spaces)
+    // Check that each line is properly preserved in serialization (allowing for trailing spaces)
     expect(serialized).toContain('| Header 1 | Header 2 | Header 3 |');
     expect(serialized).toContain('| :------- | :------: | -------: |');
     expect(serialized).toContain('| Left     | Centered | Right    |');
     expect(serialized).toContain('| Item A   | Item B   | Item C   |');
     
-    // Should have proper line breaks between rows (accounting for trailing spaces)
+    // Should have proper line breaks between rows in markdown output
     expect(serialized).toContain('| Header 1 | Header 2 | Header 3 | \n| :------- | :------: | -------: |');
   });
 

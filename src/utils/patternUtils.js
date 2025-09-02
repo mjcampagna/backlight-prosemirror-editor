@@ -44,6 +44,21 @@ export function getUnescapeRegex(char) {
 }
 
 /**
+ * Gets or creates a regex for unescaping double-escaped characters
+ * @param {string} char - Character to unescape
+ * @returns {RegExp} Compiled regex for double escapes
+ */
+export function getDoubleUnescapeRegex(char) {
+  const cacheKey = `double_${char}`;
+  if (!ESCAPE_REGEX_CACHE.has(cacheKey)) {
+    const doubleEscapedChar = `\\\\${char}`;
+    const regex = new RegExp(doubleEscapedChar.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
+    ESCAPE_REGEX_CACHE.set(cacheKey, regex);
+  }
+  return ESCAPE_REGEX_CACHE.get(cacheKey);
+}
+
+/**
  * Double pipe pattern for detecting line break markers in table content
  * Matches || with optional spaces around them
  */

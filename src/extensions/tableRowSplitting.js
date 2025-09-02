@@ -1,4 +1,4 @@
-// Table row splitting extension - splits combined table rows into separate paragraphs
+// Table row unification extension - unifies table rows into single paragraphs with line breaks
 import { isTableRowText } from "../utils/patternUtils.js";
 
 export const tableRowSplittingExtension = {
@@ -35,20 +35,36 @@ export const tableRowSplittingExtension = {
               });
               
               if (allTableRows) {
-                // Split into separate paragraph tokens for each table row
-                for (const line of lines) {
-                  const openToken = new state.Token('paragraph_open', 'p', 1);
-                  openToken.map = token.map;
+                // Create a single paragraph with hard breaks between table rows
+                const openToken = new state.Token('paragraph_open', 'p', 1);
+                openToken.map = token.map;
+                
+                const contentToken = new state.Token('inline', '', 0);
+                
+                // Build children tokens with text and hard breaks
+                const children = [];
+                for (let lineIndex = 0; lineIndex < lines.length; lineIndex++) {
+                  const line = lines[lineIndex];
                   
-                  const contentToken = new state.Token('inline', '', 0);
-                  contentToken.content = line;
-                  contentToken.map = inlineToken.map;
-                  contentToken.children = []; // Will be populated by inline parser
+                  // Add text token for this line
+                  const textToken = new state.Token('text', '', 0);
+                  textToken.content = line;
+                  children.push(textToken);
                   
-                  const closeToken = new state.Token('paragraph_close', 'p', -1);
-                  
-                  newTokens.push(openToken, contentToken, closeToken);
+                  // Add hard break between lines (except after the last line)
+                  if (lineIndex < lines.length - 1) {
+                    const hardbreakToken = new state.Token('hardbreak', 'br', 0);
+                    children.push(hardbreakToken);
+                  }
                 }
+                
+                contentToken.children = children;
+                contentToken.content = ''; // Clear content to avoid duplication - children will handle the content
+                contentToken.map = inlineToken.map;
+                
+                const closeToken = new state.Token('paragraph_close', 'p', -1);
+                
+                newTokens.push(openToken, contentToken, closeToken);
                 
                 // Skip the original paragraph tokens
                 i += 2; // Skip inline and paragraph_close
