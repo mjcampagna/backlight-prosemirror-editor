@@ -60,15 +60,17 @@ export function createMarkdownSystem(extensions = []) {
     ...baseTokens,
     // Add support for HTML tokens that markdown-it generates
     html_block: { 
-      node: "paragraph", 
-      getAttrs: (token) => {
-        // Preserve HTML content as text
-        return null;
+      node: "paragraph",
+      getContent: (token, schema) => {
+        // Create a text node with the raw HTML content
+        return schema.text(token.content || token.markup || '');
       }
     },
     html_inline: { 
-      node: "text", 
-      getAttrs: (token) => null 
+      node: "text",
+      getContent: (token, schema) => {
+        return schema.text(token.content || token.markup || '');
+      }
     }
   };
   for (const ext of extensions) {
