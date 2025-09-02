@@ -1,5 +1,5 @@
 // markdownSystem.js
-import { Schema } from "prosemirror-model";
+import { Schema, Fragment } from "prosemirror-model";
 import MarkdownIt from "markdown-it";
 import {
   schema as baseSchema,
@@ -59,18 +59,15 @@ export function createMarkdownSystem(extensions = []) {
   const mergedTokens = { 
     ...baseTokens,
     // Add support for HTML tokens that markdown-it generates
+    // Preserve HTML blocks as paragraphs with literal content
     html_block: { 
-      node: "paragraph",
-      getContent: (token, schema) => {
-        // Create a text node with the raw HTML content
-        return schema.text(token.content || token.markup || '');
+      block: "paragraph",
+      getContent(tok, schema) {
+        return Fragment.from(schema.text(tok.content));
       }
     },
     html_inline: { 
-      node: "text",
-      getContent: (token, schema) => {
-        return schema.text(token.content || token.markup || '');
-      }
+      mark: "code"
     }
   };
   for (const ext of extensions) {
