@@ -26,6 +26,14 @@ export function hasLink(state) {
         if (link.isInSet($next.marks())) {
           return true;
         }
+        
+        // Check one position ahead for immediate adjacency
+        if (from + 1 < state.doc.content.size) {
+          const $nextPos = state.doc.resolve(from + 1);
+          if (link.isInSet($nextPos.marks())) {
+            return true;
+          }
+        }
       }
     }
     
@@ -56,6 +64,12 @@ export function getLinkAttrs(state) {
     mark = link.isInSet($next.marks());
   }
   
+  // Check one position ahead for immediate adjacency (matches hasLink logic)
+  if (!mark && from + 1 < state.doc.content.size) {
+    const $nextPos = state.doc.resolve(from + 1);
+    mark = link.isInSet($nextPos.marks());
+  }
+  
   return mark ? mark.attrs : null;
 }
 
@@ -81,6 +95,13 @@ export function getLinkText(state) {
     const $next = state.doc.resolve(from);
     linkMark = link.isInSet($next.marks());
     if (linkMark) searchPos = $next;
+  }
+  
+  // Check one position ahead for immediate adjacency (matches hasLink logic)
+  if (!linkMark && from + 1 < state.doc.content.size) {
+    const $nextPos = state.doc.resolve(from + 1);
+    linkMark = link.isInSet($nextPos.marks());
+    if (linkMark) searchPos = $nextPos;
   }
   
   if (!linkMark) return "";

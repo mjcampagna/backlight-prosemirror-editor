@@ -179,6 +179,57 @@ describe('Link Commands', () => {
     })
   })
 
+  describe('Link Button Highlighting', () => {
+    it('should highlight button when cursor is immediately before link', () => {
+      // Create paragraph with link: "Visit [Google](url) now"
+      const linkMark = schema.marks.link.create({ href: 'https://google.com' });
+      const paragraph = schema.nodes.paragraph.create(null, [
+        schema.text("Visit "),
+        schema.text("Google", [linkMark]),
+        schema.text(" now")
+      ]);
+      const doc = schema.nodes.doc.create(null, [paragraph]);
+      
+      // Cursor immediately before "G" in "Google" (position 6, right after "Visit ")
+      const state = EditorState.create({
+        schema,
+        doc,
+        selection: TextSelection.create(doc, 6) // Right before "Google"
+      });
+      
+      // Debug this specific case
+      console.log('Before link test:');
+      console.log('  cursor at position:', state.selection.from);
+      console.log('  checking position', state.selection.from, '- marks:', state.doc.resolve(state.selection.from).marks().map(m => m.type.name));
+      console.log('  checking position', state.selection.from + 1, '- marks:', state.doc.resolve(state.selection.from + 1).marks().map(m => m.type.name));
+      console.log('  checking position', state.selection.from + 2, '- marks:', state.doc.resolve(state.selection.from + 2).marks().map(m => m.type.name));
+      
+      // Button should highlight because cursor is adjacent to link
+      expect(hasLink(state)).toBe(true);
+    })
+
+    it('should highlight button when cursor is immediately after link', () => {
+      // Create paragraph with link: "Visit [Google](url) now"
+      const linkMark = schema.marks.link.create({ href: 'https://google.com' });
+      const paragraph = schema.nodes.paragraph.create(null, [
+        schema.text("Visit "),
+        schema.text("Google", [linkMark]),
+        schema.text(" now")
+      ]);
+      const doc = schema.nodes.doc.create(null, [paragraph]);
+      
+      // Cursor immediately after "e" in "Google" (position 12, right after link)
+      const state = EditorState.create({
+        schema,
+        doc,
+        selection: TextSelection.create(doc, 12) // Right after "Google"
+      });
+      
+      // Button should highlight because cursor is adjacent to link
+      expect(hasLink(state)).toBe(true);
+    })
+  })
+
   describe('Smart Word Detection', () => {
     it('should extract word at cursor position', () => {
       // Create paragraph: "Visit Google now"
