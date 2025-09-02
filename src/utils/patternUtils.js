@@ -42,3 +42,38 @@ export function getUnescapeRegex(char) {
   }
   return ESCAPE_REGEX_CACHE.get(char);
 }
+
+/**
+ * Double pipe pattern for detecting line break markers in table content
+ * Matches || with optional spaces around them
+ */
+export const DOUBLE_PIPE_PATTERN = /\|\s*\|/g;
+
+/**
+ * Detects double pipes in text (ignoring spaces)
+ * @param {string} text - Text to check
+ * @returns {boolean} True if double pipes are found
+ */
+export function hasDoublePipes(text) {
+  const safeTester = createSafeRegexTester(DOUBLE_PIPE_PATTERN);
+  return safeTester(text);
+}
+
+/**
+ * Converts double pipes to soft break markers
+ * @param {string} text - Text containing double pipes
+ * @returns {string} Text with double pipes replaced by soft break markers
+ */
+export function convertDoublePipesToSoftBreaks(text) {
+  // Use a placeholder that won't conflict with normal content
+  return text.replace(DOUBLE_PIPE_PATTERN, '\u{FEFF}SOFTBREAK\u{FEFF}');
+}
+
+/**
+ * Converts soft break markers back to double pipes
+ * @param {string} text - Text containing soft break markers  
+ * @returns {string} Text with markers replaced by double pipes
+ */
+export function convertSoftBreaksToDoublePipes(text) {
+  return text.replace(/\u{FEFF}SOFTBREAK\u{FEFF}/g, '||');
+}

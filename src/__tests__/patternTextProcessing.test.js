@@ -105,7 +105,7 @@ describe('Table Row Text Processing Plugin', () => {
     const plugin = createTableRowTextProcessingPlugin();
     
     expect(plugin).toBeDefined();
-    expect(plugin.name).toBe('patternTextProcessing');
+    expect(plugin.name).toBe('tableRowTextProcessingWithSoftBreaks');
   });
 
   it('should unescape table-specific characters in table rows', () => {

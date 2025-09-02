@@ -1,5 +1,5 @@
 // Pattern-based text processing plugin for conditional character unescaping
-import { createSafeRegexTester, TABLE_ROW_PATTERN, getUnescapeRegex } from "./utils/patternUtils.js";
+import { createSafeRegexTester, TABLE_ROW_PATTERN, getUnescapeRegex, isTableRowText } from "./utils/patternUtils.js";
 
 /**
  * Creates a text processing plugin that conditionally unescapes characters
@@ -96,15 +96,60 @@ export function createPatternTextProcessingPlugin(options = {}) {
 export function createTableRowTextProcessingPlugin(options = {}) {
   const {
     unescapeChars = ['|', '*', '_'], // Common characters that should not be escaped in table rows
-    customReplacements = []
+    customReplacements = [],
+    handleSoftBreaks = true // Whether to convert soft breaks to line breaks in markdown output
   } = options;
 
-  return createPatternTextProcessingPlugin({
+  const basePlugin = createPatternTextProcessingPlugin({
     pattern: TABLE_ROW_PATTERN,
     unescapeChars,
     customReplacements,
     globalUnescapeChars: ['~'] // Keep existing tilde unescaping everywhere
   });
+
+  if (!handleSoftBreaks) {
+    return basePlugin;
+  }
+
+  // Enhance the base plugin to also handle soft break conversion
+  return {
+    name: "tableRowTextProcessingWithSoftBreaks",
+    
+    enhanceSerializer(mdSerializer) {
+      // Note: We assume the plugin is enabled since this is a convenience wrapper
+      
+      // First apply the base pattern processing
+      let enhancedSerializer = basePlugin.enhanceSerializer(mdSerializer);
+      
+      // Guard against double wrapping for soft breaks
+      if (enhancedSerializer.__tableRowSoftBreaksPatched) return enhancedSerializer;
+      enhancedSerializer.__tableRowSoftBreaksPatched = true;
+
+      const originalSerialize = enhancedSerializer.serialize.bind(enhancedSerializer);
+      enhancedSerializer.serialize = function(content, options) {
+        let result = originalSerialize(content, options);
+        
+        // Convert soft breaks in table rows to actual line breaks
+        // Look for table content that has soft breaks (\\) and convert to line breaks
+        result = result.replace(/(\|[^|\n]*)\\\n([^|\n]*\|)/g, '$1\n$2');
+        
+        // Remove extra line breaks between consecutive table rows
+        // This regex looks for table rows separated by double line breaks and makes them single
+        result = result.replace(/(\|.*\|\s*)\n\n(\|.*\|\s*)/g, '$1\n$2');
+        
+        // Continue collapsing multiple consecutive table rows
+        let prevResult;
+        do {
+          prevResult = result;
+          result = result.replace(/(\|.*\|\s*)\n\n(\|.*\|\s*)/g, '$1\n$2');
+        } while (result !== prevResult);
+        
+        return result;
+      };
+
+      return enhancedSerializer;
+    }
+  };
 }
 
 export default createPatternTextProcessingPlugin;
