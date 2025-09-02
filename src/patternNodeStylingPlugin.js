@@ -1,6 +1,7 @@
 // patternNodeStylingPlugin.js
 import { Plugin, PluginKey } from "prosemirror-state";
 import { Decoration, DecorationSet } from "prosemirror-view";
+import { createSafeRegexTester, TABLE_ROW_PATTERN } from "./utils/patternUtils.js";
 
 /**
  * A configurable utility for detecting nodes based on text patterns and applying CSS classes.
@@ -27,7 +28,10 @@ export function createPatternNodeStylingPlugin(options = {}) {
     throw new Error("Both 'pattern' and 'className' options are required");
   }
 
-  function matchesPattern(node, schema) {
+  // Create safe regex tester to avoid lastIndex mutations
+  const safePatternTest = createSafeRegexTester(pattern);
+
+  function matchesPattern(node) {
     // Check if this node type should be processed
     const nodeTypeName = node.type.name;
     if (nodeTypes.length > 0 && !nodeTypes.includes(nodeTypeName)) {
@@ -39,17 +43,17 @@ export function createPatternNodeStylingPlugin(options = {}) {
       return false;
     }
 
-    // Test the pattern against the node's text content
-    return pattern.test(node.textContent);
+    // Test the pattern against the node's text content using safe tester
+    return safePatternTest(node.textContent);
   }
 
-  function computeDecorations(doc, schema) {
+  function computeDecorations(doc) {
     const decorations = [];
     
     doc.descendants((node, pos) => {
       if (!node.isTextblock) return;
 
-      if (matchesPattern(node, schema)) {
+      if (matchesPattern(node)) {
         decorations.push(
           Decoration.node(pos, pos + node.nodeSize, { class: className })
         );
@@ -62,12 +66,12 @@ export function createPatternNodeStylingPlugin(options = {}) {
   return new Plugin({
     key: new PluginKey(pluginKey),
     state: {
-      init: (_, state) => computeDecorations(state.doc, state.schema),
+      init: (_, state) => computeDecorations(state.doc),
       apply(tr, oldDecorations, _oldState, newState) {
         // Map existing decorations, recompute on document changes
         let decorations = oldDecorations.map(tr.mapping, tr.doc);
         if (tr.docChanged) {
-          decorations = computeDecorations(newState.doc, newState.schema);
+          decorations = computeDecorations(newState.doc);
         }
         return decorations;
       }
@@ -87,11 +91,8 @@ export function createTableRowStylingPlugin(options = {}) {
     pluginKey = "table-row-styling"
   } = options;
 
-  // Pattern: starts with |, ends with | (ignoring trailing spaces)
-  const tableRowPattern = /^\|.*\|\s*$/;
-
   return createPatternNodeStylingPlugin({
-    pattern: tableRowPattern,
+    pattern: TABLE_ROW_PATTERN,
     className,
     pluginKey,
     nodeTypes: ["paragraph"],

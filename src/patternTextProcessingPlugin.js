@@ -1,4 +1,5 @@
 // Pattern-based text processing plugin for conditional character unescaping
+import { createSafeRegexTester, TABLE_ROW_PATTERN, getUnescapeRegex } from "./utils/patternUtils.js";
 
 /**
  * Creates a text processing plugin that conditionally unescapes characters
@@ -26,21 +27,30 @@ export function createPatternTextProcessingPlugin(options = {}) {
     throw new Error("'pattern' option is required");
   }
 
+  // Create safe pattern tester and pre-compile character regexes
+  const safePatternTest = createSafeRegexTester(pattern);
+  const globalUnescapeRegexes = globalUnescapeChars.map(getUnescapeRegex);
+  const patternUnescapeRegexes = unescapeChars.map(getUnescapeRegex);
+
   return {
     name: "patternTextProcessing",
     
     // Apply post-processing to markdown serializer
     enhanceSerializer(mdSerializer) {
       if (!enabled) return mdSerializer;
+      
+      // Guard against double wrapping
+      if (mdSerializer.__patternTextProcessingPatched) return mdSerializer;
+      mdSerializer.__patternTextProcessingPatched = true;
 
       const originalSerialize = mdSerializer.serialize.bind(mdSerializer);
       mdSerializer.serialize = function(content, options) {
         let result = originalSerialize(content, options);
         
-        // Process globally unescaped characters everywhere
-        for (const char of globalUnescapeChars) {
-          const escapedChar = `\\${char}`;
-          const regex = new RegExp(escapedChar.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
+        // Process globally unescaped characters everywhere using pre-compiled regexes
+        for (let i = 0; i < globalUnescapeChars.length; i++) {
+          const char = globalUnescapeChars[i];
+          const regex = globalUnescapeRegexes[i];
           result = result.replace(regex, char);
         }
         
@@ -49,14 +59,14 @@ export function createPatternTextProcessingPlugin(options = {}) {
         for (let i = 0; i < lines.length; i++) {
           const line = lines[i];
           
-          // Check if this line matches our pattern
-          if (pattern.test(line)) {
+          // Check if this line matches our pattern using safe tester
+          if (safePatternTest(line)) {
             let processedLine = line;
             
-            // Unescape specified characters in matching lines
-            for (const char of unescapeChars) {
-              const escapedChar = `\\${char}`;
-              const regex = new RegExp(escapedChar.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
+            // Unescape specified characters in matching lines using pre-compiled regexes
+            for (let j = 0; j < unescapeChars.length; j++) {
+              const char = unescapeChars[j];
+              const regex = patternUnescapeRegexes[j];
               processedLine = processedLine.replace(regex, char);
             }
             
@@ -89,11 +99,8 @@ export function createTableRowTextProcessingPlugin(options = {}) {
     customReplacements = []
   } = options;
 
-  // Pattern: starts with |, ends with | (ignoring trailing spaces)
-  const tableRowPattern = /^\|.*\|\s*$/;
-
   return createPatternTextProcessingPlugin({
-    pattern: tableRowPattern,
+    pattern: TABLE_ROW_PATTERN,
     unescapeChars,
     customReplacements,
     globalUnescapeChars: ['~'] // Keep existing tilde unescaping everywhere
