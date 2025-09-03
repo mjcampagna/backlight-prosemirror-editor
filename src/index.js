@@ -120,7 +120,10 @@ class ProseMirrorView {
           ...buildMarkdownPlugins(schema, { codeJoinMode: "smart" }),
           ...keymapPlugins,
           htmlLiteralStylingPlugin({ className: "pm-html-literal" }),
-          createTableRowStylingPlugin({ className: "pm-table" }),
+          createTableRowStylingPlugin({ 
+            serializer: mdSerializer, 
+            parser: mdParser 
+          }),
         ],
       }),
       dispatchTransaction: (tr) => {

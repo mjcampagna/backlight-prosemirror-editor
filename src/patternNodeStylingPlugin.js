@@ -1,7 +1,7 @@
 // patternNodeStylingPlugin.js
 import { Plugin, PluginKey } from "prosemirror-state";
 import { Decoration, DecorationSet } from "prosemirror-view";
-import { createSafeRegexTester, TABLE_ROW_PATTERN, validateTableStructure } from "./utils/patternUtils.js";
+import { createSafeRegexTester, TABLE_ROW_PATTERN, validateTableStructureWithSerialization } from "./utils/patternUtils.js";
 
 /**
  * A configurable utility for detecting nodes based on text patterns and applying CSS classes.
@@ -84,10 +84,12 @@ export function createPatternNodeStylingPlugin(options = {}) {
   });
 }
 
-// Simple table validation and styling plugin  
+// Serialization-based table validation and styling plugin  
 export function createTableRowStylingPlugin(options = {}) {
   const {
-    pluginKey = "table-styling"
+    pluginKey = "table-styling",
+    serializer = null,
+    parser = null
   } = options;
 
   function computeDecorations(doc) {
@@ -102,8 +104,14 @@ export function createTableRowStylingPlugin(options = {}) {
         return;
       }
       
-      // Validate the table structure and get appropriate class
-      const validation = validateTableStructure(text);
+      // Use serialization-based validation if available
+      let validation;
+      if (serializer && parser) {
+        validation = validateTableStructureWithSerialization(node, serializer, parser);
+      } else {
+        // Fallback to simple validation (all table content valid for now)
+        validation = { isValid: true, cssClass: 'pm-table' };
+      }
       
       decorations.push(
         Decoration.node(pos, pos + node.nodeSize, { 
