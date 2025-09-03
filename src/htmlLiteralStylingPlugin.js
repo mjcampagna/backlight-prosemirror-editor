@@ -4,7 +4,6 @@ import { createPatternNodeStylingPlugin } from "./patternNodeStylingPlugin.js";
 /**
  * Heuristic: a paragraph (or heading if enabled) is "HTML-only" if its textContent
  * is whitespace + one or more HTML-ish tags/comments/doctypes, with nothing else.
- * Tweak the regex if you want to be stricter/looser.
  */
 const HTML_ONLY_RE =
   /^(?:\s*(?:<!--[\s\S]*?-->|<!DOCTYPE[^>]*>|<\?[\s\S]*?\?>|<\/?\w[\s\S]*?>)\s*)+$/i;
