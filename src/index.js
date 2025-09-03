@@ -253,6 +253,13 @@ function wireEditorToggle(ta) {
       console.log('Switching from ProseMirror - toolbar height:', toolbarHeight + 'px');
     }
     
+    // Measure current editor height
+    if (currentMode === "prosemirror" && view.view?.dom) {
+      console.log('ProseMirror editor height:', view.view.dom.offsetHeight + 'px');
+    } else if (currentMode === "markdown" && view.textarea) {
+      console.log('Markdown textarea height:', view.textarea.offsetHeight + 'px');
+    }
+    
     view.destroy();
 
     view =
