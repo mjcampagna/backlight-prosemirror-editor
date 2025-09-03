@@ -253,8 +253,10 @@ function wireEditorToggle(ta) {
       const toolbarHeight = toolbar?.offsetHeight || 0;
       const editorHeight = view.view?.dom?.offsetHeight || 0;
       totalHeight = editorHeight + toolbarHeight;
+      console.log('ProseMirror total height:', totalHeight + 'px', '(editor:', editorHeight + 'px', '+ toolbar:', toolbarHeight + 'px)');
     } else if (currentMode === "markdown" && view.textarea) {
       totalHeight = view.textarea.offsetHeight;
+      console.log('Markdown total height:', totalHeight + 'px', '(textarea only)');
     }
     
     view.destroy();
@@ -265,16 +267,16 @@ function wireEditorToggle(ta) {
         : new ProseMirrorView(ta, content);
 
     // Apply total height to the new editor
-    if (totalHeight && totalHeight > 0) {
-      if (nextMode === "markdown") {
-        // Apply total height directly to textarea
-        view.textarea.style.height = `${totalHeight}px`;
-      } else if (nextMode === "prosemirror") {
-        // Apply total height to container (toolbar + editor)
-        const editorContainer = view._createdMount || view.root;
-        editorContainer.style.height = `${totalHeight}px`;
-      }
-    }
+    // if (totalHeight && totalHeight > 0) {
+    //   if (nextMode === "markdown") {
+    //     // Apply total height directly to textarea
+    //     view.textarea.style.height = `${totalHeight}px`;
+    //   } else if (nextMode === "prosemirror") {
+    //     // Apply total height to container (toolbar + editor)
+    //     const editorContainer = view._createdMount || view.root;
+    //     editorContainer.style.height = `${totalHeight}px`;
+    //   }
+    // }
 
     updateButton();
     view.focus();
