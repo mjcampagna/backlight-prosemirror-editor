@@ -245,19 +245,16 @@ function wireEditorToggle(ta) {
 
     const content = view.content; // pull current content before destroying
     
-    // Measure toolbar height before destroying the view
+    // Measure total editor height before destroying the view
+    let totalHeight = null;
     if (currentMode === "prosemirror") {
       const editorContainer = view._createdMount || view.root;
       const toolbar = editorContainer?.querySelector('.pm-toolbar');
       const toolbarHeight = toolbar?.offsetHeight || 0;
-      console.log('Switching from ProseMirror - toolbar height:', toolbarHeight + 'px');
-    }
-    
-    // Measure current editor height
-    if (currentMode === "prosemirror" && view.view?.dom) {
-      console.log('ProseMirror editor height:', view.view.dom.offsetHeight + 'px');
+      const editorHeight = view.view?.dom?.offsetHeight || 0;
+      totalHeight = editorHeight + toolbarHeight;
     } else if (currentMode === "markdown" && view.textarea) {
-      console.log('Markdown textarea height:', view.textarea.offsetHeight + 'px');
+      totalHeight = view.textarea.offsetHeight;
     }
     
     view.destroy();
@@ -266,6 +263,18 @@ function wireEditorToggle(ta) {
       nextMode === "markdown"
         ? new MarkdownView(ta, content)
         : new ProseMirrorView(ta, content);
+
+    // Apply total height to the new editor
+    if (totalHeight && totalHeight > 0) {
+      if (nextMode === "markdown") {
+        // Apply total height directly to textarea
+        view.textarea.style.height = `${totalHeight}px`;
+      } else if (nextMode === "prosemirror") {
+        // Apply total height to container (toolbar + editor)
+        const editorContainer = view._createdMount || view.root;
+        editorContainer.style.height = `${totalHeight}px`;
+      }
+    }
 
     updateButton();
     view.focus();

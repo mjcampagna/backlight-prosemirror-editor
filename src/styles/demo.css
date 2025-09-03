@@ -14,7 +14,9 @@
 
 /* Demo textarea styling */
 textarea {
+  box-sizing: border-box;
   height: 256px;
+  padding: 12px;
   resize: vertical;
   width: 100%;
 }
