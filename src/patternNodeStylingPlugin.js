@@ -84,11 +84,11 @@ export function createPatternNodeStylingPlugin(options = {}) {
   });
 }
 
-// Convenience function for creating table row styling specifically
+// Convenience function for creating table styling specifically
 export function createTableRowStylingPlugin(options = {}) {
   const {
-    className = "pm-table-row",
-    pluginKey = "table-row-styling"
+    className = "pm-table",
+    pluginKey = "table-styling"
   } = options;
 
   return createPatternNodeStylingPlugin({

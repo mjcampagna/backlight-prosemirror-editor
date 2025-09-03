@@ -341,15 +341,30 @@
   white-space: pre-wrap;
 }
 
-/* Table row pattern styling */
-.pm-editor-container .pm-table-row {
-  --pm-table-bg: var(--pm-table-row-bg, #f8f9ff);
-  --pm-table-border: var(--pm-table-row-border, #4a90e2);
-  --pm-table-color: var(--pm-table-row-color, inherit);
+/* Table pattern styling */
+.pm-editor-container .pm-table {
+  --pm-table-bg: var(--pm-table-bg, #f8f9ff);
+  --pm-table-border: var(--pm-table-border, #4a90e2);
+  --pm-table-color: var(--pm-table-color, inherit);
   
   background: var(--pm-table-bg);
   color: var(--pm-table-color);
   border-left: 3px solid var(--pm-table-border);
+  padding: 0.5em 0.8em;
+  margin: 0.25em 0;
+  font-family: var(--pm-code-font, 'Monaco', 'Menlo', 'Ubuntu Mono', monospace);
+  border-radius: 3px;
+}
+
+/* Invalid table pattern styling */
+.pm-editor-container .pm-table-invalid {
+  --pm-table-invalid-bg: var(--pm-table-invalid-bg, #fff8f8);
+  --pm-table-invalid-border: var(--pm-table-invalid-border, #dc3545);
+  --pm-table-invalid-color: var(--pm-table-invalid-color, inherit);
+  
+  background: var(--pm-table-invalid-bg);
+  color: var(--pm-table-invalid-color);
+  border-left: 3px solid var(--pm-table-invalid-border);
   padding: 0.5em 0.8em;
   margin: 0.25em 0;
   font-family: var(--pm-code-font, 'Monaco', 'Menlo', 'Ubuntu Mono', monospace);
