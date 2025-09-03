@@ -139,16 +139,32 @@ export function markdownToolbarPlugin(options = {}) {
 
       if (schema.nodes.list_item) {
         const { bullet_list, ordered_list, list_item } = schema.nodes;
-        if (bullet_list) items.push(makeBtn({
-          label: "• List", title: "Bulleted list (Shift-Ctrl-8)",
-          run: run(applyListUnified(bullet_list, list_item)),
-          isActive: (s) => selectionAllInAncestorType(s, bullet_list),
+        if (ordered_list) items.push(makeBtn({
+          label: "ol", title: "Numbered list (Shift-Ctrl-7)",
+          run: run(applyListUnified(ordered_list, list_item)),
+          isActive: (s) => {
+            // Don't activate if HR is in selection
+            const { from, to } = s.selection;
+            let hasHR = false;
+            s.doc.nodesBetween(from, to, (node) => {
+              if (node.type.name === 'horizontal_rule') { hasHR = true; return false; }
+            });
+            return !hasHR && selectionAllInAncestorType(s, ordered_list);
+          },
           isEnabled: () => true
         }));
-        if (ordered_list) items.push(makeBtn({
-          label: "1. List", title: "Numbered list (Shift-Ctrl-7)",
-          run: run(applyListUnified(ordered_list, list_item)),
-          isActive: (s) => selectionAllInAncestorType(s, ordered_list),
+        if (bullet_list) items.push(makeBtn({
+          label: "ul", title: "Bulleted list (Shift-Ctrl-8)",
+          run: run(applyListUnified(bullet_list, list_item)),
+          isActive: (s) => {
+            // Don't activate if HR is in selection
+            const { from, to } = s.selection;
+            let hasHR = false;
+            s.doc.nodesBetween(from, to, (node) => {
+              if (node.type.name === 'horizontal_rule') { hasHR = true; return false; }
+            });
+            return !hasHR && selectionAllInAncestorType(s, bullet_list);
+          },
           isEnabled: () => true
         }));
         items.push(
@@ -171,7 +187,15 @@ export function markdownToolbarPlugin(options = {}) {
         items.push(makeBtn({
           label: "❝ ❞", title: "Blockquote (Shift-Ctrl-B)",
           run: run(cmd),
-          isActive: (s) => selectionAllInAncestorType(s, schema.nodes.blockquote),
+          isActive: (s) => {
+            // Don't activate if HR is in selection
+            const { from, to } = s.selection;
+            let hasHR = false;
+            s.doc.nodesBetween(from, to, (node) => {
+              if (node.type.name === 'horizontal_rule') { hasHR = true; return false; }
+            });
+            return !hasHR && selectionAllInAncestorType(s, schema.nodes.blockquote);
+          },
           isEnabled: () => true
         }));
       }
@@ -198,6 +222,32 @@ export function markdownToolbarPlugin(options = {}) {
             run: run(cmdSingle),
           })
         );
+      }
+
+      if (schema.nodes.horizontal_rule) {
+        items.push(makeBtn({
+          label: "—",
+          title: "Horizontal rule",
+          run: (view) => {
+            const { state, dispatch } = view;
+            const { selection } = state;
+            
+            // Insert horizontal rule at current position
+            const hrNode = schema.nodes.horizontal_rule.create();
+            const tr = state.tr.replaceSelectionWith(hrNode);
+            dispatch(tr);
+          },
+          isEnabled: (state) => {
+            const { selection } = state;
+            const { $from } = selection;
+            
+            // Only enable when at start of an empty paragraph
+            return $from.parent.type === state.schema.nodes.paragraph && 
+                   $from.parent.content.size === 0 &&
+                   $from.parentOffset === 0;
+          },
+          isActive: () => false // HR doesn't have an "active" state
+        }));
       }
 
       const parent = editorView.dom.parentNode;

@@ -97,8 +97,18 @@ export const isBlockActive = (state, type, attrs = null) => {
   if (!type) return false;
   const { from, to } = state.selection;
   let active = true;
+  let foundAnyBlocks = false;
+  
   state.doc.nodesBetween(from, to, (node) => {
-    if (node.isTextblock && !node.hasMarkup(type, attrs)) { active = false; return false; }
+    if (node.isTextblock || node.isBlock) {
+      foundAnyBlocks = true;
+      if (!node.hasMarkup(type, attrs)) { 
+        active = false; 
+        return false; 
+      }
+    }
   });
-  return active;
+  
+  // If no blocks found, not active
+  return foundAnyBlocks && active;
 };
