@@ -244,6 +244,15 @@ function wireEditorToggle(ta) {
     if (nextMode === currentMode) return;
 
     const content = view.content; // pull current content before destroying
+    
+    // Measure toolbar height before destroying the view
+    if (currentMode === "prosemirror") {
+      const editorContainer = view._createdMount || view.root;
+      const toolbar = editorContainer?.querySelector('.pm-toolbar');
+      const toolbarHeight = toolbar?.offsetHeight || 0;
+      console.log('Switching from ProseMirror - toolbar height:', toolbarHeight + 'px');
+    }
+    
     view.destroy();
 
     view =
