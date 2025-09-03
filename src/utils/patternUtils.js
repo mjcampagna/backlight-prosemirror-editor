@@ -159,16 +159,49 @@ export function validateTableStructure(text) {
   }
 
   // Extract table-like lines (start with |)
-  const tableLines = text.split(/\n/)
-    .map(line => line.trim())
-    .filter(line => line && line.startsWith('|'));
+  // Handle both line breaks (\n) and double pipe markers (||)
+  let tableLines;
+  if (text.includes('||')) {
+    // Double pipe format - split and reconstruct
+    tableLines = text.split(/\s*\|\|\s*/)
+      .map(part => part.trim())
+      .filter(part => part)
+      .map(part => part.startsWith('|') ? part : '| ' + part);
+  } else {
+    // Standard line break format
+    tableLines = text.split(/\n/)
+      .map(line => line.trim())
+      .filter(line => line && line.startsWith('|'));
+  }
 
   if (tableLines.length === 0) {
     return { isValid: false, cssClass: 'pm-table-invalid' };
   }
 
   if (tableLines.length === 1) {
-    // Single line - always valid table content
+    // Single line - but might be unified content with embedded separator
+    const singleLine = tableLines[0];
+    
+    // Check if this line contains an embedded separator pattern
+    // Look for patterns like "| Header | Data| -" where "| -" at the end is a separator
+    const separatorMatch = singleLine.match(/^(.+)\|\s*(:?-+:?\s*)$/);
+    
+    if (separatorMatch) {
+      const headerPart = separatorMatch[1].trim();
+      const separatorPart = '|' + separatorMatch[2].trim();
+      
+      if (isTableSeparatorRow(separatorPart)) {
+        const headerCells = countTableCells(headerPart + '|'); // Add back the pipe for counting
+        const separatorCells = countTableCells(separatorPart);
+        
+        if (headerCells === separatorCells) {
+          return { isValid: true, cssClass: 'pm-table' };
+        }
+        return { isValid: false, cssClass: 'pm-table-invalid' };
+      }
+    }
+    
+    // Regular single line - always valid table content
     return { isValid: true, cssClass: 'pm-table' };
   }
 
