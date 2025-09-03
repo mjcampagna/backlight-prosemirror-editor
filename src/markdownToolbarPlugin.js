@@ -75,25 +75,30 @@ export function markdownToolbarPlugin(options = {}) {
       const can = (cmd) => (state) => cmd(state);
 
       if (schema.marks.strong) items.push(makeBtn({
-        label: "B", title: "Bold (Mod-B)",
+        label: "Bold", title: "Bold (Mod-B)",
+        icon: "bold",
         run: run(toggleMark(schema.marks.strong)),
         isActive: (s) => isMarkActive(s, schema.marks.strong),
         isEnabled: can(toggleMark(schema.marks.strong))
       }));
       if (schema.marks.em) items.push(makeBtn({
-        label: "I", title: "Italic (Mod-I)",
+        label: "Italic", title: "Italic (Mod-I)",
+        icon: "italic",
         run: run(toggleMark(schema.marks.em)),
         isActive: (s) => isMarkActive(s, schema.marks.em),
         isEnabled: can(toggleMark(schema.marks.em))
       }));
       if (schema.marks.code) items.push(makeBtn({
-        label: "{;}", title: "Inline code (Mod-`)",
+        icon: "inline_code",
+        label: "Inline code",
+        title: "Inline code (Mod-`)",
         run: run(toggleMark(schema.marks.code)),
         isActive: (s) => isMarkActive(s, schema.marks.code),
         isEnabled: can(toggleMark(schema.marks.code))
       }));
       if (schema.marks.link) items.push(makeBtn({
         label: "Link", title: "Link (Mod-K)",
+        icon: "link",
         run: (view) => createLinkCommand()(view.state, view.dispatch, view),
         isActive: (s) => hasLink(s),
         isEnabled: () => true
@@ -140,7 +145,9 @@ export function markdownToolbarPlugin(options = {}) {
       if (schema.nodes.list_item) {
         const { bullet_list, ordered_list, list_item } = schema.nodes;
         if (ordered_list) items.push(makeBtn({
-          label: "ol", title: "Numbered list (Shift-Ctrl-7)",
+          icon: "ol",
+          label: "ol",
+          title: "Numbered list (Shift-Ctrl-7)",
           run: run(applyListUnified(ordered_list, list_item)),
           isActive: (s) => {
             // Don't activate if HR is in selection
@@ -154,7 +161,9 @@ export function markdownToolbarPlugin(options = {}) {
           isEnabled: () => true
         }));
         if (bullet_list) items.push(makeBtn({
-          label: "ul", title: "Bulleted list (Shift-Ctrl-8)",
+          icon: "ul",
+          label: "ul",
+          title: "Bulleted list (Shift-Ctrl-8)",
           run: run(applyListUnified(bullet_list, list_item)),
           isActive: (s) => {
             // Don't activate if HR is in selection
@@ -185,7 +194,9 @@ export function markdownToolbarPlugin(options = {}) {
       if (schema.nodes.blockquote) {
         const cmd = applyBlockquoteUnified(schema.nodes.blockquote);
         items.push(makeBtn({
-          label: "❝ ❞", title: "Blockquote (Shift-Ctrl-B)",
+          icon: "blockquote",
+          label: "❝ ❞",
+          title: "Blockquote (Shift-Ctrl-B)",
           run: run(cmd),
           isActive: (s) => {
             // Don't activate if HR is in selection
@@ -211,12 +222,14 @@ export function markdownToolbarPlugin(options = {}) {
 
         items.push(
           makeBtn({
+            icon: "code",
             label: "</>",
             title: "Code block (Shift-Ctrl-\\)",
             run: run(cmdMulti),
             isActive: (s) => isBlockActive(s, schema.nodes.code_block),
           }),
           makeBtn({
+            icon: "flatten_code",
             label: "<*>",
             title: "Flatten to one code block",
             run: run(cmdSingle),

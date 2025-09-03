@@ -1,8 +1,18 @@
-export function makeBtn({ label, title, run, isActive, isEnabled }) {
+import { getIcon } from './icons.js';
+
+export function makeBtn({ label, title, run, isActive, isEnabled, icon }) {
   const btn = document.createElement("button");
   btn.type = "button";
   btn.className = "pm-btn";
-  btn.textContent = label;
+  
+  // Use icon if provided, otherwise fall back to text label
+  if (icon) {
+    btn.innerHTML = getIcon(icon);
+    btn.setAttribute('aria-label', label);
+  } else {
+    btn.textContent = label;
+  }
+  
   if (title) btn.title = title;
   btn.setAttribute("aria-pressed", "false");
   btn.addEventListener("mousedown", (e) => e.preventDefault());

@@ -162,6 +162,13 @@
   opacity: .45;
 }
 
+.pm-editor-container .pm-btn svg {
+  width: 16px;
+  height: 16px;
+  display: block;
+  flex-shrink: 0;
+}
+
 .pm-editor-container .pm-select {
   display: inline-block;
   margin: 0;
