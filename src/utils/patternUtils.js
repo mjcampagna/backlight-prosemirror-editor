@@ -6,9 +6,10 @@
  * @returns {Function} Safe test function
  */
 export function createSafeRegexTester(pattern) {
+  // Create non-global version to avoid lastIndex issues
+  const safePattern = new RegExp(pattern.source, pattern.flags.replace('g', ''));
   return function(text) {
-    // Create a new regex instance to avoid lastIndex mutations
-    const safePattern = new RegExp(pattern.source, pattern.flags);
+    safePattern.lastIndex = 0;
     return safePattern.test(text);
   };
 }
@@ -58,40 +59,7 @@ export function getDoubleUnescapeRegex(char) {
   return ESCAPE_REGEX_CACHE.get(cacheKey);
 }
 
-/**
- * Double pipe pattern for detecting line break markers in table content
- * Matches || with optional spaces around them
- */
-export const DOUBLE_PIPE_PATTERN = /\|\s*\|/g;
 
-/**
- * Detects double pipes in text (ignoring spaces)
- * @param {string} text - Text to check
- * @returns {boolean} True if double pipes are found
- */
-export function hasDoublePipes(text) {
-  const safeTester = createSafeRegexTester(DOUBLE_PIPE_PATTERN);
-  return safeTester(text);
-}
-
-/**
- * Converts double pipes to soft break markers
- * @param {string} text - Text containing double pipes
- * @returns {string} Text with double pipes replaced by soft break markers
- */
-export function convertDoublePipesToSoftBreaks(text) {
-  // Use a placeholder that won't conflict with normal content
-  return text.replace(DOUBLE_PIPE_PATTERN, '\u{FEFF}SOFTBREAK\u{FEFF}');
-}
-
-/**
- * Converts soft break markers back to double pipes
- * @param {string} text - Text containing soft break markers  
- * @returns {string} Text with markers replaced by double pipes
- */
-export function convertSoftBreaksToDoublePipes(text) {
-  return text.replace(/\u{FEFF}SOFTBREAK\u{FEFF}/g, '||');
-}
 
 /**
  * Counts the number of cells in a table row
@@ -173,8 +141,8 @@ export function validateTableStructureWithSerialization(node, serializer) {
     }
     
     if (tableLines.length === 1) {
-      // Single row - valid table content
-      return { isValid: true, cssClass: 'pm-table' };
+      // Single row - invalid per GFM (requires header + separator minimum)
+      return { isValid: false, cssClass: 'pm-table-invalid' };
     }
     
     // Multiple rows - apply GFM validation  
@@ -200,14 +168,22 @@ export function validateTableStructureWithSerialization(node, serializer) {
 }
 
 /**
- * Alias for backward compatibility with tests
+ * Fallback text-based validation for tests
  * @param {string} text - Node text content
  * @returns {{isValid: boolean, cssClass: string}} Validation result
  */
 export function validateTableStructure(text) {
-  // Temporary fallback - treat all table content as valid
+  // Simple fallback for tests - single rows invalid per GFM
   if (!text || !text.trim() || !text.includes('|') || !text.trim().startsWith('|')) {
     return { isValid: false, cssClass: 'pm-table-invalid' };
   }
-  return { isValid: true, cssClass: 'pm-table' };
+  
+  // Check if this has multiple lines (would be valid)
+  const lines = text.split('\n').filter(line => line.trim().startsWith('|'));
+  if (lines.length >= 2) {
+    return { isValid: true, cssClass: 'pm-table' };
+  }
+  
+  // Single line - invalid per GFM
+  return { isValid: false, cssClass: 'pm-table-invalid' };
 }

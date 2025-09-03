@@ -34,20 +34,21 @@ describe('Simple Table Validation', () => {
   });
 
   describe('validateTableStructure', () => {
-    it('should validate single lines as valid table content', () => {
+    it('should invalidate single lines per GFM spec', () => {
+      // GFM requires header + separator minimum
       expect(validateTableStructure('| Header')).toEqual({
-        isValid: true,
-        cssClass: 'pm-table'
+        isValid: false,
+        cssClass: 'pm-table-invalid'
       });
       
       expect(validateTableStructure('|-')).toEqual({
-        isValid: true,
-        cssClass: 'pm-table'
+        isValid: false,
+        cssClass: 'pm-table-invalid'
       });
       
       expect(validateTableStructure('| Data | More')).toEqual({
-        isValid: true,
-        cssClass: 'pm-table'
+        isValid: false,
+        cssClass: 'pm-table-invalid'
       });
     });
 

@@ -97,6 +97,13 @@ export function createTableRowStylingPlugin(options = {}) {
     doc.descendants((node, pos) => {
       if (!node.isTextblock) return;
       
+      // Exclude code blocks and other non-content blocks  
+      if (node.type.name === 'code_block' || 
+          node.type.name === 'math_block' || 
+          node.type.name === 'blockquote') {
+        return;
+      }
+      
       // Check if this looks like table content
       const text = node.textContent;
       if (!text || !text.includes('|') || !text.trim().startsWith('|')) {
@@ -142,4 +149,4 @@ export function createTableRowStylingPlugin(options = {}) {
   });
 }
 
-export default createPatternNodeStylingPlugin;
+// Removed default export - use named exports for clarity
