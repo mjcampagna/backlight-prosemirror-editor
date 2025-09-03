@@ -88,8 +88,7 @@ export function createPatternNodeStylingPlugin(options = {}) {
 export function createTableRowStylingPlugin(options = {}) {
   const {
     pluginKey = "table-styling",
-    serializer = null,
-    parser = null
+    serializer = null
   } = options;
 
   function computeDecorations(doc) {
@@ -106,8 +105,8 @@ export function createTableRowStylingPlugin(options = {}) {
       
       // Use serialization-based validation if available
       let validation;
-      if (serializer && parser) {
-        validation = validateTableStructureWithSerialization(node, serializer, parser);
+      if (serializer) {
+        validation = validateTableStructureWithSerialization(node, serializer);
       } else {
         // Fallback to simple validation (all table content valid for now)
         validation = { isValid: true, cssClass: 'pm-table' };

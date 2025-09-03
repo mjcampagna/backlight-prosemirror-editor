@@ -121,8 +121,7 @@ class ProseMirrorView {
           ...keymapPlugins,
           htmlLiteralStylingPlugin({ className: "pm-html-literal" }),
           createTableRowStylingPlugin({ 
-            serializer: mdSerializer, 
-            parser: mdParser 
+            serializer: mdSerializer
           }),
         ],
       }),

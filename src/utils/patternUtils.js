@@ -154,8 +154,8 @@ export function isTableSeparatorRow(line) {
  * @param {Object} parser - The markdown parser
  * @returns {{isValid: boolean, cssClass: string}} Validation result
  */
-export function validateTableStructureWithSerialization(node, serializer, parser) {
-  if (!node || !serializer || !parser) {
+export function validateTableStructureWithSerialization(node, serializer) {
+  if (!node || !serializer) {
     return { isValid: false, cssClass: 'pm-table-invalid' };
   }
 
@@ -163,23 +163,11 @@ export function validateTableStructureWithSerialization(node, serializer, parser
     // Step 1: Serialize node to clean markdown
     const markdown = serializer.serialize(node);
     
-    // Step 2: Parse back to get clean structure
-    const cleanDoc = parser.parse(markdown);
+    // Step 2: Validate the markdown directly (much simpler!)
+    const tableLines = markdown.split('\n')
+      .map(line => line.trim())
+      .filter(line => line && line.startsWith('|'));
     
-    // Step 3: Extract table rows from clean structure
-    const tableLines = [];
-    
-    // Walk the clean document to find table rows
-    cleanDoc.descendants((childNode) => {
-      if (childNode.isTextblock && childNode.textContent) {
-        const text = childNode.textContent;
-        if (text.trim().startsWith('|')) {
-          tableLines.push(text.trim());
-        }
-      }
-    });
-    
-    // Step 4: Apply GFM validation to clean structure
     if (tableLines.length === 0) {
       return { isValid: false, cssClass: 'pm-table-invalid' };
     }
@@ -189,7 +177,7 @@ export function validateTableStructureWithSerialization(node, serializer, parser
       return { isValid: true, cssClass: 'pm-table' };
     }
     
-    // Multiple rows - validate header vs separator per GFM spec
+    // Multiple rows - apply GFM validation  
     const headerRow = tableLines[0];
     const separatorRow = tableLines[1];
     
