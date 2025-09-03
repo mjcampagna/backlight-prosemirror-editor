@@ -1,7 +1,7 @@
 // patternNodeStylingPlugin.js
 import { Plugin, PluginKey } from "prosemirror-state";
 import { Decoration, DecorationSet } from "prosemirror-view";
-import { createSafeRegexTester, TABLE_ROW_PATTERN } from "./utils/patternUtils.js";
+import { createSafeRegexTester, TABLE_ROW_PATTERN, validateTableStructure } from "./utils/patternUtils.js";
 
 /**
  * A configurable utility for detecting nodes based on text patterns and applying CSS classes.
@@ -84,19 +84,54 @@ export function createPatternNodeStylingPlugin(options = {}) {
   });
 }
 
-// Convenience function for creating table styling specifically
+// Simple table validation and styling plugin  
 export function createTableRowStylingPlugin(options = {}) {
   const {
-    className = "pm-table",
     pluginKey = "table-styling"
   } = options;
 
-  return createPatternNodeStylingPlugin({
-    pattern: TABLE_ROW_PATTERN,
-    className,
-    pluginKey,
-    nodeTypes: ["paragraph"],
-    excludeTypes: ["code_block"]
+  function computeDecorations(doc) {
+    const decorations = [];
+    
+    doc.descendants((node, pos) => {
+      if (!node.isTextblock) return;
+      
+      // Check if this looks like table content
+      const text = node.textContent;
+      if (!text || !text.includes('|') || !text.trim().startsWith('|')) {
+        return;
+      }
+      
+      // Validate the table structure and get appropriate class
+      const validation = validateTableStructure(text);
+      
+      decorations.push(
+        Decoration.node(pos, pos + node.nodeSize, { 
+          class: validation.cssClass 
+        })
+      );
+    });
+    
+    return DecorationSet.create(doc, decorations);
+  }
+
+  return new Plugin({
+    key: new PluginKey(pluginKey),
+    state: {
+      init: (_, state) => computeDecorations(state.doc),
+      apply(tr, oldDecorations, _oldState, newState) {
+        let decorations = oldDecorations.map(tr.mapping, tr.doc);
+        if (tr.docChanged) {
+          decorations = computeDecorations(newState.doc);
+        }
+        return decorations;
+      }
+    },
+    props: {
+      decorations(state) {
+        return this.getState(state);
+      }
+    }
   });
 }
 

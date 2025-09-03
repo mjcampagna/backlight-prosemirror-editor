@@ -48,9 +48,9 @@ describe('Pattern Utilities', () => {
       expect(isTableRowText('| Data | More |')).toBe(true);
       expect(isTableRowText('| With trailing |   ')).toBe(true);
       expect(isTableRowText('|Compact|')).toBe(true);
+      expect(isTableRowText('| No ending pipe')).toBe(true);  // Ending pipe is optional per GFM
       
       expect(isTableRowText('Regular text')).toBe(false);
-      expect(isTableRowText('| Missing end')).toBe(false);
       expect(isTableRowText('Missing start |')).toBe(false);
     });
 
