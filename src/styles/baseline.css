@@ -92,7 +92,7 @@
   border-radius: 8px;
   border-bottom-right-radius: 4px;
   color: var(--pm-editor-color);
-  max-height: 75vh;
+  max-height: 80vh;
   min-height: 256px;
   outline: none;
   overflow: auto;
