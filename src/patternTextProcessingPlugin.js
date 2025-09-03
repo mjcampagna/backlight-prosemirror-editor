@@ -1,5 +1,5 @@
 // Pattern-based text processing plugin for conditional character unescaping
-import { createSafeRegexTester, TABLE_ROW_PATTERN, getUnescapeRegex } from "./utils/patternUtils.js";
+import { createSafeRegexTester, TABLE_ROW_PATTERN, getUnescapeRegex, getDoubleUnescapeRegex, isTableRowText } from "./utils/patternUtils.js";
 
 /**
  * Creates a text processing plugin that conditionally unescapes characters
@@ -31,6 +31,7 @@ export function createPatternTextProcessingPlugin(options = {}) {
   const safePatternTest = createSafeRegexTester(pattern);
   const globalUnescapeRegexes = globalUnescapeChars.map(getUnescapeRegex);
   const patternUnescapeRegexes = unescapeChars.map(getUnescapeRegex);
+  const patternDoubleUnescapeRegexes = unescapeChars.map(getDoubleUnescapeRegex);
 
   return {
     name: "patternTextProcessing",
@@ -64,10 +65,15 @@ export function createPatternTextProcessingPlugin(options = {}) {
             let processedLine = line;
             
             // Unescape specified characters in matching lines using pre-compiled regexes
+            // Handle both single and double escaping
             for (let j = 0; j < unescapeChars.length; j++) {
               const char = unescapeChars[j];
-              const regex = patternUnescapeRegexes[j];
-              processedLine = processedLine.replace(regex, char);
+              const doubleRegex = patternDoubleUnescapeRegexes[j];
+              const singleRegex = patternUnescapeRegexes[j];
+              
+              // First handle double escapes (\\|), then single escapes (\|)
+              processedLine = processedLine.replace(doubleRegex, char);
+              processedLine = processedLine.replace(singleRegex, char);
             }
             
             // Apply custom replacements to matching lines
@@ -96,15 +102,49 @@ export function createPatternTextProcessingPlugin(options = {}) {
 export function createTableRowTextProcessingPlugin(options = {}) {
   const {
     unescapeChars = ['|', '*', '_'], // Common characters that should not be escaped in table rows
-    customReplacements = []
+    customReplacements = [],
+    handleSoftBreaks = true // Whether to convert soft breaks to line breaks in markdown output
   } = options;
 
-  return createPatternTextProcessingPlugin({
+  const basePlugin = createPatternTextProcessingPlugin({
     pattern: TABLE_ROW_PATTERN,
     unescapeChars,
     customReplacements,
     globalUnescapeChars: ['~'] // Keep existing tilde unescaping everywhere
   });
+
+  if (!handleSoftBreaks) {
+    return basePlugin;
+  }
+
+  // Enhance the base plugin to also handle soft break conversion
+  return {
+    name: "tableRowTextProcessingWithSoftBreaks",
+    
+    enhanceSerializer(mdSerializer) {
+      // Note: We assume the plugin is enabled since this is a convenience wrapper
+      
+      // First apply the base pattern processing
+      let enhancedSerializer = basePlugin.enhanceSerializer(mdSerializer);
+      
+      // Guard against double wrapping for soft breaks
+      if (enhancedSerializer.__tableRowSoftBreaksPatched) return enhancedSerializer;
+      enhancedSerializer.__tableRowSoftBreaksPatched = true;
+
+      const originalSerialize = enhancedSerializer.serialize.bind(enhancedSerializer);
+      enhancedSerializer.serialize = function(content, options) {
+        let result = originalSerialize(content, options);
+        
+        // Convert hard breaks within table content to actual line breaks in markdown
+        // This specifically handles the \\ + \n pattern from ProseMirror hard breaks
+        result = result.replace(/(\|[^|\n]*)\\\n([^|\n]*\|)/g, '$1\n$2');
+        
+        return result;
+      };
+
+      return enhancedSerializer;
+    }
+  };
 }
 
 export default createPatternTextProcessingPlugin;

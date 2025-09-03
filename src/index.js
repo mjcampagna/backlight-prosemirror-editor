@@ -2,6 +2,7 @@ import { EditorState } from "prosemirror-state";
 import { EditorView } from "prosemirror-view";
 import { createMarkdownSystem } from "./markdownSystem.js";
 import { enhancedLinkExtension } from "./extensions/enhancedLink.js";
+import { tableRowSplittingExtension } from "./extensions/tableRowSplitting.js";
 
 import buildMarkdownPlugins from "./markdownToolbarPlugin.js";
 import htmlLiteralStylingPlugin from "./htmlLiteralStylingPlugin.js";
@@ -102,7 +103,7 @@ class ProseMirrorView {
     }
 
     // Create markdown system with extensions and text processing
-    const markdownSystem = createMarkdownSystem([enhancedLinkExtension], {
+    const markdownSystem = createMarkdownSystem([enhancedLinkExtension, tableRowSplittingExtension], {
       textProcessing: createTableRowTextProcessingPlugin() // Enable pattern-based text processing
     });
     const { schema, mdParser, mdSerializer, keymapPlugins } = markdownSystem;
@@ -119,7 +120,9 @@ class ProseMirrorView {
           ...buildMarkdownPlugins(schema, { codeJoinMode: "smart" }),
           ...keymapPlugins,
           htmlLiteralStylingPlugin({ className: "pm-html-literal" }),
-          createTableRowStylingPlugin({ className: "pm-table-row" }),
+          createTableRowStylingPlugin({ 
+            serializer: mdSerializer
+          }),
         ],
       }),
       dispatchTransaction: (tr) => {
