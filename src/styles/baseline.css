@@ -191,6 +191,10 @@
   padding: 3px 18px;
 }
 
+.pm-editor-container blockquote > *:first-child {
+  margin-top: 0;
+}
+
 .pm-editor-container blockquote > *:last-child {
   margin-bottom: 0;
 }
