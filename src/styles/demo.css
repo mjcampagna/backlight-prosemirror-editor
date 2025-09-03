@@ -15,6 +15,7 @@
 /* Demo textarea styling */
 textarea {
   height: 256px;
+  resize: vertical;
   width: 100%;
 }
 
