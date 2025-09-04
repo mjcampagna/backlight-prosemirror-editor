@@ -314,12 +314,26 @@ function wireEditorToggle(ta) {
     if (nextMode === view.mode) return;
 
     const content = view.content;
-    const wrapper = ta.parentElement;
+    
+    // Simple height preservation - measure current editor
+    let currentHeight = 0;
+    if (view.mode === MODES.PROSEMIRROR && view.view?.dom) {
+      currentHeight = view.view.dom.offsetHeight;
+    } else if (view.mode === MODES.MARKDOWN && view.textarea) {
+      currentHeight = view.textarea.offsetHeight;
+    }
 
-    preserveHeight(wrapper, () => {
-      view.destroy();
-      view = createView(nextMode, ta, content);
-    });
+    view.destroy();
+    view = createView(nextMode, ta, content);
+
+    // Apply preserved height to new editor
+    if (currentHeight > 0) {
+      if (nextMode === MODES.MARKDOWN && view.textarea) {
+        view.textarea.style.height = `${currentHeight}px`;
+      } else if (nextMode === MODES.PROSEMIRROR && view.view?.dom) {
+        view.view.dom.style.height = `${currentHeight}px`;
+      }
+    }
 
     updateButton();
     view.focus();
