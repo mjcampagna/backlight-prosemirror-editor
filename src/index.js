@@ -203,6 +203,26 @@ const readMode = (el) => (typeof getActiveEditorMode === "function" ? getActiveE
 // Label helper
 const labelFor = (mode) => (mode === "markdown" ? "to WYSIWYG" : "to Markdown");
 
+// Utility to measure editor content height (excluding toolbar)
+function measureEditorContentHeight(view, currentMode) {
+  if (currentMode === "prosemirror" && view.view?.dom) {
+    // Look for the actual ProseMirror content area, not the whole editor DOM
+    const contentArea = view.view.dom.querySelector('.ProseMirror') || view.view.dom;
+    return contentArea.offsetHeight || 0;
+  } else if (currentMode === "markdown" && view.textarea) {
+    return view.textarea.offsetHeight || 0;
+  }
+  return 0;
+}
+
+function measureEditorToolbarHeight(view, currentMode) {
+  if (currentMode === "prosemirror" && view._createdMount) {
+    const toolbar = view._createdMount.querySelector('.pm-toolbar');
+    return toolbar?.offsetHeight || 0;
+  }
+  return 0;
+}
+
 // Wire a single textarea + button
 function wireEditorToggle(ta) {
   let btn = ta.parentElement?.querySelector("button");
@@ -241,23 +261,15 @@ function wireEditorToggle(ta) {
     const currentMode =
       readMode(ta) ||
       (view instanceof MarkdownView ? "markdown" : "prosemirror");
+
     if (nextMode === currentMode) return;
 
-    const content = view.content; // pull current content before destroying
-    
-    // Measure total editor height before destroying the view
-    let totalHeight = null;
-    if (currentMode === "prosemirror") {
-      const editorContainer = view._createdMount || view.root;
-      const toolbar = editorContainer?.querySelector('.pm-toolbar');
-      const toolbarHeight = toolbar?.offsetHeight || 0;
-      const editorHeight = view.view?.dom?.offsetHeight || 0;
-      totalHeight = editorHeight + toolbarHeight;
-      console.log('ProseMirror total height:', totalHeight + 'px', '(editor:', editorHeight + 'px', '+ toolbar:', toolbarHeight + 'px)');
-    } else if (currentMode === "markdown" && view.textarea) {
-      totalHeight = view.textarea.offsetHeight;
-      console.log('Markdown total height:', totalHeight + 'px', '(textarea only)');
-    }
+    let toolbarHeight = measureEditorToolbarHeight(view, currentMode);
+    console.log('toolbarHeight:', toolbarHeight + 'px');
+
+    // pull current content before destroying
+    const content = view.content;
+    const contentHeight = measureEditorContentHeight(view, currentMode);
     
     view.destroy();
 
@@ -266,17 +278,10 @@ function wireEditorToggle(ta) {
         ? new MarkdownView(ta, content)
         : new ProseMirrorView(ta, content);
 
-    // Apply total height to the new editor
-    // if (totalHeight && totalHeight > 0) {
-    //   if (nextMode === "markdown") {
-    //     // Apply total height directly to textarea
-    //     view.textarea.style.height = `${totalHeight}px`;
-    //   } else if (nextMode === "prosemirror") {
-    //     // Apply total height to container (toolbar + editor)
-    //     const editorContainer = view._createdMount || view.root;
-    //     editorContainer.style.height = `${totalHeight}px`;
-    //   }
-    // }
+    toolbarHeight = measureEditorToolbarHeight(view, nextMode);
+    console.log('toolbarHeight:', toolbarHeight + 'px');
+    
+    console.log(contentHeight, toolbarHeight, contentHeight + toolbarHeight);
 
     updateButton();
     view.focus();
