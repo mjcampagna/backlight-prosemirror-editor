@@ -10,6 +10,19 @@ import { createTableRowStylingPlugin } from "./patternNodeStylingPlugin.js";
 import { createTableRowTextProcessingPlugin } from "./patternTextProcessingPlugin.js";
 import { presets } from "./plugins/textProcessing.js";
 
+// --- Constants ---
+const CSS_CLASSES = {
+  EDITOR_CONTAINER: 'pm-editor-container',
+  PROSEMIRROR_CONTENT: '.ProseMirror',
+  TOOLBAR: '.pm-toolbar',
+  TOGGLE_BUTTON: 'toggle-editor-mode'
+};
+
+const MODES = {
+  MARKDOWN: 'markdown',
+  PROSEMIRROR: 'prosemirror'
+};
+
 // --- Active-editor registry (works even with multiple editors) ---
 const REGISTRY_KEY = Symbol.for("app/active-editor-registry");
 const ACTIVE = (globalThis[REGISTRY_KEY] ??= new WeakMap());
@@ -27,15 +40,58 @@ function unmarkActive(el, instance) {
   // delete el.dataset.editorMode;
 }
 
-class MarkdownView {
-  static MODE = "markdown";
+// --- Utility Functions ---
+function safeSerialize(serializer, doc) {
+  try {
+    return serializer.serialize(doc);
+  } catch (err) {
+    console.error('Failed to serialize PM doc, falling back to plain text', err);
+    return doc.textContent || '';
+  }
+}
 
+function getOuterHeight(node) {
+  const rect = node?.getBoundingClientRect();
+  return rect ? rect.height : 0;
+}
+
+function preserveHeight(wrapper, callback) {
+  const prevHeight = getOuterHeight(wrapper);
+  if (prevHeight > 0) {
+    wrapper.style.height = `${prevHeight}px`;
+  }
+  callback();
+  requestAnimationFrame(() => {
+    wrapper.style.height = '';
+  });
+}
+
+// --- Base View Class ---
+class BaseView {
   static isActive(el) { return ACTIVE.get(el)?.mode === this.MODE; }
   static activeMode(el) { return ACTIVE.get(el)?.mode ?? null; }
   static activeInstance(el) { return ACTIVE.get(el)?.instance ?? null; }
 
-  constructor(target, content = "") {
+  constructor(target) {
     this.root = target;
+    this._destroyed = false;
+    markActive(this.root, this.constructor.MODE, this);
+  }
+
+  get mode() { return this.constructor.MODE; }
+  
+  destroy() {
+    if (this._destroyed) return;
+    this._destroyed = true;
+    unmarkActive(this.root, this);
+  }
+}
+
+class MarkdownView extends BaseView {
+  static MODE = MODES.MARKDOWN;
+
+  constructor(target, content = "") {
+    super(target);
 
     if (isTextarea(target)) {
       this.textarea = target; // the form field of record
@@ -49,28 +105,23 @@ class MarkdownView {
       target.appendChild(this.textarea);
       this._ownsTextarea = true;
     }
-
-    markActive(this.root, MarkdownView.MODE, this);
   }
 
   get content() { return this.textarea.value; }
-  get mode() { return MarkdownView.MODE; }
   focus() { this.textarea.focus(); }
+  
   destroy() {
+    if (this._destroyed) return;
     if (this._ownsTextarea) this.textarea.remove();
-    unmarkActive(this.root, this);
+    super.destroy();
   }
 }
 
-class ProseMirrorView {
-  static MODE = "prosemirror";
-
-  static isActive(el) { return ACTIVE.get(el)?.mode === this.MODE; }
-  static activeMode(el) { return ACTIVE.get(el)?.mode ?? null; }
-  static activeInstance(el) { return ACTIVE.get(el)?.instance ?? null; }
+class ProseMirrorView extends BaseView {
+  static MODE = MODES.PROSEMIRROR;
 
   constructor(target, content = "") {
-    this.root = target;
+    super(target);
 
     let mountEl;
     let initialMarkdown;
@@ -82,7 +133,7 @@ class ProseMirrorView {
 
       // Create a mount container for the editor and hide textarea
       this._createdMount = document.createElement("div");
-      this._createdMount.className = "pm-editor-container";
+      this._createdMount.className = CSS_CLASSES.EDITOR_CONTAINER;
       target.insertAdjacentElement("beforebegin", this._createdMount);
 
       this._prevDisplay = target.style.display;
@@ -142,7 +193,7 @@ class ProseMirrorView {
       this.form.addEventListener("submit", this._onSubmit);
     }
 
-    markActive(this.root, ProseMirrorView.MODE, this);
+    // markActive called by super()
   }
 
   // Serialize editor → textarea (throttled with rAF)
@@ -150,7 +201,7 @@ class ProseMirrorView {
     if (!this.mirror) return;
     const run = () => {
       this._syncScheduled = false;
-      const md = this.mdSerializer.serialize(this.view.state.doc);
+      const md = safeSerialize(this.mdSerializer, this.view.state.doc);
       if (this.mirror.value !== md) this.mirror.value = md;
     };
     if (force) {
@@ -165,15 +216,34 @@ class ProseMirrorView {
   _scheduleSync() { this._syncToMirror(false); }
 
   get content() {
-    return this.mdSerializer.serialize(this.view.state.doc);
+    return safeSerialize(this.mdSerializer, this.view.state.doc);
   }
-  get mode() { return ProseMirrorView.MODE; }
+  
   focus() { this.view.focus(); }
+  
   destroy() {
-    if (this._raf) cancelAnimationFrame(this._raf);
-    if (this.form && this._onSubmit) this.form.removeEventListener("submit", this._onSubmit);
-    this.view.destroy();
+    if (this._destroyed) return;
+    
+    // Cancel scheduled work
+    if (this._raf) {
+      cancelAnimationFrame(this._raf);
+      this._raf = null;
+    }
+    this._syncScheduled = false;
+    
+    // Clean up form listener
+    if (this.form && this._onSubmit) {
+      this.form.removeEventListener("submit", this._onSubmit);
+      this._onSubmit = null;
+    }
+    
+    // Clean up editor
+    if (this.view) {
+      this.view.destroy();
+      this.view = null;
+    }
 
+    // Clean up DOM
     if (this._createdMount) {
       this._createdMount.remove();
       this._createdMount = null;
@@ -186,9 +256,10 @@ class ProseMirrorView {
       // container case: remove hidden mirror we created
       this.mirror.remove();
       this._ownsMirror = false;
+      this.mirror = null;
     }
 
-    unmarkActive(this.root, this);
+    super.destroy();
   }
 }
 
@@ -203,24 +274,11 @@ const readMode = (el) => (typeof getActiveEditorMode === "function" ? getActiveE
 // Label helper
 const labelFor = (mode) => (mode === "markdown" ? "to WYSIWYG" : "to Markdown");
 
-// Utility to measure editor content height (excluding toolbar)
-function measureEditorContentHeight(view, currentMode) {
-  if (currentMode === "prosemirror" && view.view?.dom) {
-    // Look for the actual ProseMirror content area, not the whole editor DOM
-    const contentArea = view.view.dom.querySelector('.ProseMirror') || view.view.dom;
-    return contentArea.offsetHeight || 0;
-  } else if (currentMode === "markdown" && view.textarea) {
-    return view.textarea.offsetHeight || 0;
-  }
-  return 0;
-}
-
-function measureEditorToolbarHeight(view, currentMode) {
-  if (currentMode === "prosemirror" && view._createdMount) {
-    const toolbar = view._createdMount.querySelector('.pm-toolbar');
-    return toolbar?.offsetHeight || 0;
-  }
-  return 0;
+// View factory
+function createView(mode, target, content) {
+  return mode === MODES.MARKDOWN 
+    ? new MarkdownView(target, content)
+    : new ProseMirrorView(target, content);
 }
 
 // Wire a single textarea + button
@@ -231,65 +289,37 @@ function wireEditorToggle(ta) {
     btn = document.createElement("button");
     btn.type = "button";
     btn.setAttribute("aria-label", "Editor mode");
-    btn.className = "toggle-editor-mode";
+    btn.className = CSS_CLASSES.TOGGLE_BUTTON;
     btn.style.marginBottom = "12px";
     
     // Insert before the textarea
     ta.parentElement.insertBefore(btn, ta);
   }
 
-  // Determine starting mode; default to markdown if unknown
-  const initialMode = readMode(ta) || "prosemirror";
+  // Determine starting mode; default to prosemirror if unknown
+  const initialMode = readMode(ta) || MODES.PROSEMIRROR;
 
   // Create initial view
-  let view =
-    initialMode === "markdown"
-      ? new MarkdownView(ta, ta.value)
-      : new ProseMirrorView(ta, ta.value);
+  let view = createView(initialMode, ta, ta.value);
 
   // Keep button label in sync with current mode
   function updateButton() {
-    const mode =
-      readMode(ta) ||
-      (view instanceof MarkdownView ? "markdown" : "prosemirror");
-    btn.textContent = labelFor(mode);
-    btn.setAttribute("data-editor-mode", mode); // optional, handy for styling/tests
+    btn.textContent = labelFor(view.mode);
+    btn.setAttribute("data-editor-mode", view.mode);
+    btn.setAttribute("aria-pressed", view.mode === MODES.MARKDOWN ? "true" : "false");
   }
 
   // Switch function used by the button (and available for you to call)
   function switchTo(nextMode) {
-    const currentMode =
-      readMode(ta) ||
-      (view instanceof MarkdownView ? "markdown" : "prosemirror");
+    if (nextMode === view.mode) return;
 
-    if (nextMode === currentMode) return;
-
-    let toolbarHeight = measureEditorToolbarHeight(view, currentMode);
-
-    // pull current content before destroying
     const content = view.content;
-    const contentHeight = measureEditorContentHeight(view, currentMode);
-    
-    view.destroy();
+    const wrapper = ta.parentElement;
 
-    view =
-      nextMode === "markdown"
-        ? new MarkdownView(ta, content)
-        : new ProseMirrorView(ta, content);
-
-    toolbarHeight = measureEditorToolbarHeight(view, nextMode);
-
-    // Apply height to maintain consistent total visual size
-    if (contentHeight > 0) {
-      if (nextMode === "markdown") {
-        // For markdown, total height = content + toolbar (since no toolbar in markdown)
-        view.textarea.style.height = `${contentHeight + toolbarHeight}px`;
-      } else if (nextMode === "prosemirror" && view.view?.dom) {
-        // For ProseMirror, apply content height and let toolbar add naturally
-        const contentArea = view.view.dom.querySelector('.ProseMirror') || view.view.dom;
-        contentArea.style.height = `${contentHeight}px`;
-      }
-    }
+    preserveHeight(wrapper, () => {
+      view.destroy();
+      view = createView(nextMode, ta, content);
+    });
 
     updateButton();
     view.focus();
@@ -300,22 +330,17 @@ function wireEditorToggle(ta) {
 
   // Toggle on click
   btn.addEventListener("click", () => {
-    const mode =
-      readMode(ta) ||
-      (view instanceof MarkdownView ? "markdown" : "prosemirror");
-    switchTo(mode === "markdown" ? "prosemirror" : "markdown");
+    const nextMode = view.mode === MODES.MARKDOWN ? MODES.PROSEMIRROR : MODES.MARKDOWN;
+    switchTo(nextMode);
   });
 
   // Optional: expose a tiny API for programmatic control
   ta._editorAPI = {
-    get mode() {
-      return (
-        readMode(ta) ||
-        (view instanceof MarkdownView ? "markdown" : "prosemirror")
-      );
-    },
-    get view() {
-      return view;
+    get mode() { return view.mode; },
+    get view() { return view; },
+    toggle() { 
+      const nextMode = view.mode === MODES.MARKDOWN ? MODES.PROSEMIRROR : MODES.MARKDOWN;
+      switchTo(nextMode);
     },
     switchTo,
     refreshButton: updateButton
