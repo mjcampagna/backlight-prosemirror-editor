@@ -265,7 +265,6 @@ function wireEditorToggle(ta) {
     if (nextMode === currentMode) return;
 
     let toolbarHeight = measureEditorToolbarHeight(view, currentMode);
-    console.log('toolbarHeight:', toolbarHeight + 'px');
 
     // pull current content before destroying
     const content = view.content;
@@ -279,9 +278,18 @@ function wireEditorToggle(ta) {
         : new ProseMirrorView(ta, content);
 
     toolbarHeight = measureEditorToolbarHeight(view, nextMode);
-    console.log('toolbarHeight:', toolbarHeight + 'px');
-    
-    console.log(contentHeight, toolbarHeight, contentHeight + toolbarHeight);
+
+    // Apply height to maintain consistent total visual size
+    if (contentHeight > 0) {
+      if (nextMode === "markdown") {
+        // For markdown, total height = content + toolbar (since no toolbar in markdown)
+        view.textarea.style.height = `${contentHeight + toolbarHeight}px`;
+      } else if (nextMode === "prosemirror" && view.view?.dom) {
+        // For ProseMirror, apply content height and let toolbar add naturally
+        const contentArea = view.view.dom.querySelector('.ProseMirror') || view.view.dom;
+        contentArea.style.height = `${contentHeight}px`;
+      }
+    }
 
     updateButton();
     view.focus();
