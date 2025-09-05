@@ -3,6 +3,14 @@
 
 /* CSS Variables for customizable theming */
 :root {
+
+	/* Toggle button colors */
+	--pm-toggle-button-bg: transparent;
+	--pm-toggle-button-color: #2196F3;
+	--pm-toggle-button-bg-hover: transparent;
+	--pm-toggle-button-color-hover: #1565C0;
+	--pm-border-radius: 8px;
+
 	/* Editor colors */
 	--pm-editor-border: #ddd;
 	--pm-editor-border-focus: #999;
@@ -66,6 +74,31 @@
 	--pm-table-invalid-bg: #fff8f8;
 	--pm-table-invalid-border: #dc3545;
 	--pm-table-invalid-color: inherit;
+}
+
+/* Toggle editor mode button */
+.pm-editor-controls {
+	align-items: center;
+	display: flex;
+	justify-content: flex-end;
+
+	.toggle-editor-mode-button {
+		background: var(--pm-toggle-button-bg);
+		border: none;
+		border-radius: var(--pm-border-radius);
+		color: var(--pm-toggle-button-color);
+		cursor: pointer;
+		font-size: 14px;
+		font-weight: 600;
+		margin: 0;
+		padding-bottom: 6px;
+		transition: background 0.15s ease;	
+	}
+
+	.toggle-editor-mode-button:hover {
+		background: var(--pm-toggle-button-bg-hover);
+		color: var(--pm-toggle-button-color-hover);
+	}
 }
 
 /* Essential ProseMirror editor styles */

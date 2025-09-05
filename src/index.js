@@ -15,7 +15,7 @@ const CSS_CLASSES = {
   EDITOR_CONTAINER: 'pm-editor-container',
   PROSEMIRROR_CONTENT: '.ProseMirror',
   TOOLBAR: '.pm-toolbar',
-  TOGGLE_BUTTON: 'toggle-editor-mode'
+  TOGGLE_BUTTON: 'toggle-editor-mode-button'
 };
 
 const MODES = {
@@ -285,15 +285,17 @@ function createView(mode, target, content) {
 function wireEditorToggle(ta) {
   let btn = ta.parentElement?.querySelector("button");
   if (!btn) {
-    // Create toggle button if it doesn't exist
+    // Create toggle button wrapper and button
+    const btnWrapper = document.createElement("div");
+    btnWrapper.className = "pm-editor-controls";
+    
     btn = document.createElement("button");
     btn.type = "button";
     btn.setAttribute("aria-label", "Editor mode");
     btn.className = CSS_CLASSES.TOGGLE_BUTTON;
-    btn.style.marginBottom = "12px";
     
-    // Insert before the textarea
-    ta.parentElement.insertBefore(btn, ta);
+    btnWrapper.appendChild(btn);
+    ta.parentElement.insertBefore(btnWrapper, ta);
   }
 
   // Determine starting mode; default to prosemirror if unknown
