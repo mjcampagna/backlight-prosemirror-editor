@@ -326,4 +326,160 @@ This is a test with **bold** text.
       expect(typeof textarea._editorAPI.switchTo).toBe('function');
     });
   });
+
+  describe('Multiple Editor Isolation', () => {
+    beforeEach(() => {
+      document.body.innerHTML = `
+        <div>
+          <textarea id="editor1" data-editor-mode="prosemirror">Editor 1 Content</textarea>
+        </div>
+        <div>
+          <textarea id="editor2" data-editor-mode="markdown">Editor 2 Content</textarea>
+        </div>
+        <div>
+          <textarea id="editor3" data-editor="prosemirror">Editor 3 Content</textarea>
+        </div>
+      `;
+    });
+
+    it('should initialize multiple editors independently', () => {
+      initProseMirrorEditor('textarea');
+      
+      const editor1 = document.getElementById('editor1');
+      const editor2 = document.getElementById('editor2');
+      const editor3 = document.getElementById('editor3');
+      
+      // All should have their own API
+      expect(editor1._editorAPI).toBeDefined();
+      expect(editor2._editorAPI).toBeDefined();
+      expect(editor3._editorAPI).toBeDefined();
+      
+      // Should start in their specified modes
+      expect(editor1._editorAPI.mode).toBe('prosemirror');
+      expect(editor2._editorAPI.mode).toBe('markdown');
+      expect(editor3._editorAPI.mode).toBe('prosemirror');
+    });
+
+    it('should toggle only the target editor when button is clicked', () => {
+      initProseMirrorEditor('textarea');
+      
+      const editor1 = document.getElementById('editor1');
+      const editor2 = document.getElementById('editor2');
+      const editor3 = document.getElementById('editor3');
+      
+      const api1 = editor1._editorAPI;
+      const api2 = editor2._editorAPI;
+      const api3 = editor3._editorAPI;
+      
+      // Record initial modes
+      const initialMode1 = api1.mode;
+      const initialMode2 = api2.mode;
+      const initialMode3 = api3.mode;
+      
+      // Toggle only editor1
+      api1.toggle();
+      
+      // Editor1 should change, others should remain the same
+      expect(api1.mode).not.toBe(initialMode1);
+      expect(api2.mode).toBe(initialMode2);
+      expect(api3.mode).toBe(initialMode3);
+    });
+
+    it('should switch specific editor mode without affecting others', () => {
+      initProseMirrorEditor('textarea');
+      
+      const editor1 = document.getElementById('editor1');
+      const editor2 = document.getElementById('editor2');
+      const editor3 = document.getElementById('editor3');
+      
+      const api1 = editor1._editorAPI;
+      const api2 = editor2._editorAPI;
+      const api3 = editor3._editorAPI;
+      
+      // Switch editor2 to prosemirror mode
+      api2.switchTo('prosemirror');
+      
+      // Only editor2 should change
+      expect(api1.mode).toBe('prosemirror'); // unchanged
+      expect(api2.mode).toBe('prosemirror'); // changed from markdown
+      expect(api3.mode).toBe('prosemirror'); // unchanged
+    });
+
+    it('should maintain independent content across editors', () => {
+      initProseMirrorEditor('textarea');
+      
+      const editor1 = document.getElementById('editor1');
+      const editor2 = document.getElementById('editor2');
+      
+      const api1 = editor1._editorAPI;
+      const api2 = editor2._editorAPI;
+      
+      const content1 = api1.view.content;
+      const content2 = api2.view.content;
+      
+      // Contents should be different and independent
+      expect(content1).not.toBe(content2);
+      expect(content1).toContain('Editor 1');
+      expect(content2).toContain('Editor 2');
+      
+      // Switching one shouldn't affect the other's content
+      api1.toggle();
+      
+      expect(api1.view.content).toContain('Editor 1');
+      expect(api2.view.content).toContain('Editor 2');
+    });
+
+    it('should create separate toggle buttons for each editor', () => {
+      initProseMirrorEditor('textarea');
+      
+      const editor1 = document.getElementById('editor1');
+      const editor2 = document.getElementById('editor2');
+      const editor3 = document.getElementById('editor3');
+      
+      // Each editor should have its own control wrapper and button
+      const controls1 = editor1.parentElement.querySelector('.pm-editor-controls');
+      const controls2 = editor2.parentElement.querySelector('.pm-editor-controls');
+      const controls3 = editor3.parentElement.querySelector('.pm-editor-controls');
+      
+      expect(controls1).toBeDefined();
+      expect(controls2).toBeDefined();
+      expect(controls3).toBeDefined();
+      
+      // Each should have exactly one button
+      expect(controls1.querySelectorAll('button').length).toBe(1);
+      expect(controls2.querySelectorAll('button').length).toBe(1);
+      expect(controls3.querySelectorAll('button').length).toBe(1);
+    });
+
+    it('should handle clicking different toggle buttons independently', () => {
+      initProseMirrorEditor('textarea');
+      
+      const editor1 = document.getElementById('editor1');
+      const editor2 = document.getElementById('editor2');
+      
+      const api1 = editor1._editorAPI;
+      const api2 = editor2._editorAPI;
+      
+      const button1 = editor1.parentElement.querySelector('button');
+      const button2 = editor2.parentElement.querySelector('button');
+      
+      const initialMode1 = api1.mode;
+      const initialMode2 = api2.mode;
+      
+      // Click button1
+      button1.click();
+      
+      // Only editor1 should change mode
+      expect(api1.mode).not.toBe(initialMode1);
+      expect(api2.mode).toBe(initialMode2);
+      
+      // Click button2
+      button2.click();
+      
+      // Now editor2 should also change, but editor1 should remain in its new mode
+      const mode1AfterFirstClick = api1.mode;
+      expect(api2.mode).not.toBe(initialMode2);
+      expect(api1.mode).toBe(mode1AfterFirstClick); // unchanged from second click
+    });
+  });
 });
