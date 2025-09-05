@@ -282,7 +282,7 @@ function getActiveEditorMode(el) {
 const readMode = (el) => (typeof getActiveEditorMode === "function" ? getActiveEditorMode(el) : null);
 
 // Label helper
-const labelFor = (mode) => (mode === "markdown" ? "to WYSIWYG" : "to Markdown");
+const labelFor = (mode) => (mode === "markdown" ? "Use WYSIWYG Editor" : "Use Markdown editor");
 
 // View factory
 function createView(mode, target, content) {
