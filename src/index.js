@@ -283,6 +283,12 @@ function createView(mode, target, content) {
 
 // Wire a single textarea + button
 function wireEditorToggle(ta) {
+  // Ensure we're working with a textarea element
+  if (!isTextarea(ta)) {
+    alert(`Error: initProseMirrorEditor requires textarea elements. Found: ${ta.tagName.toLowerCase()}`);
+    return;
+  }
+
   let btn = ta.parentElement?.querySelector("button");
   if (!btn) {
     // Create toggle button wrapper and button
