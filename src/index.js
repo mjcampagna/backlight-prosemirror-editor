@@ -372,4 +372,7 @@ export function initProseMirrorEditor(selector = "textarea.prosemirror-enabled")
 export { createMarkdownSystem } from "./markdownSystem.js";
 export { buildMarkdownPlugins } from "./markdownToolbarPlugin.js";
 
+// Export height utilities for testing
+export { getOuterHeight, preserveHeight, safeSerialize };
+
 
