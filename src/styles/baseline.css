@@ -207,7 +207,10 @@
 		padding: 12px;
 		resize: vertical;
 
-		* {
+		/* Reset only prose elements to preserve widgets/embeds */
+		p, h1, h2, h3, h4, h5, h6, 
+		ul, ol, li, blockquote, pre, code,
+		strong, em, a, br, hr {
 			all: unset;
 			box-sizing: border-box;
 		}
