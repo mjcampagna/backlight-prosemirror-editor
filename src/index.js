@@ -281,15 +281,26 @@ function createView(mode, target, content) {
     : new ProseMirrorView(target, content);
 }
 
-// Wire a single textarea + button
-function wireEditorToggle(ta) {
-  // Ensure we're working with a textarea element
-  if (!isTextarea(ta)) {
-    alert(`Error: initProseMirrorEditor requires textarea elements. Found: ${ta.tagName.toLowerCase()}`);
-    return;
-  }
+// Mode detection from data attributes
+function detectModeFromElement(element) {
+  // Check various data attributes for mode specification
+  const dataEditor = element.getAttribute('data-editor');
+  const dataEditorMode = element.getAttribute('data-editor-mode');
+  
+  // Validate mode values
+  const isValidMode = (mode) => mode === MODES.MARKDOWN || mode === MODES.PROSEMIRROR;
+  
+  if (isValidMode(dataEditor)) return dataEditor;
+  if (isValidMode(dataEditorMode)) return dataEditorMode;
+  
+  // Default to prosemirror mode
+  return MODES.PROSEMIRROR;
+}
 
-  let btn = ta.parentElement?.querySelector("button");
+// Wire a single element + button  
+function wireEditorToggle(element, initialMode = MODES.PROSEMIRROR) {
+
+  let btn = element.parentElement?.querySelector("button");
   if (!btn) {
     // Create toggle button wrapper and button
     const btnWrapper = document.createElement("div");
@@ -301,14 +312,12 @@ function wireEditorToggle(ta) {
     btn.className = CSS_CLASSES.TOGGLE_BUTTON;
     
     btnWrapper.appendChild(btn);
-    ta.parentElement.insertBefore(btnWrapper, ta);
+    element.parentElement.insertBefore(btnWrapper, element);
   }
 
-  // Determine starting mode; default to prosemirror if unknown
-  const initialMode = readMode(ta) || MODES.PROSEMIRROR;
-
+  // Use the provided initial mode
   // Create initial view
-  let view = createView(initialMode, ta, ta.value);
+  let view = createView(initialMode, element, element.value || "");
 
   // Keep button label in sync with current mode
   function updateButton() {
@@ -332,7 +341,7 @@ function wireEditorToggle(ta) {
     }
 
     view.destroy();
-    view = createView(nextMode, ta, content);
+    view = createView(nextMode, element, content);
 
     // Apply preserved height to new editor
     if (currentHeight > 0) {
@@ -357,7 +366,7 @@ function wireEditorToggle(ta) {
   });
 
   // Optional: expose a tiny API for programmatic control
-  ta._editorAPI = {
+  element._editorAPI = {
     get mode() { return view.mode; },
     get view() { return view; },
     toggle() { 
@@ -373,7 +382,17 @@ function wireEditorToggle(ta) {
 export function initProseMirrorEditor(selector = "textarea[data-editor-mode]") {
   document
     .querySelectorAll(selector)
-    .forEach((ta) => wireEditorToggle(ta));
+    .forEach((element) => {
+      // Ensure element is a textarea
+      if (!isTextarea(element)) {
+        alert(`Error: initProseMirrorEditor requires textarea elements. Found: ${element.tagName.toLowerCase()}`);
+        return;
+      }
+      
+      // Detect mode from data attributes
+      const initialMode = detectModeFromElement(element);
+      wireEditorToggle(element, initialMode);
+    });
 }
 
 // Export additional utilities for advanced usage

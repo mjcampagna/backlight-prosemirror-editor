@@ -13,7 +13,7 @@ describe('Horizontal Rule Button', () => {
       <!DOCTYPE html>
       <html>
         <body>
-          <textarea class="prosemirror-enabled">Some initial content.</textarea>
+          <textarea data-editor-mode="prosemirror">Some initial content.</textarea>
         </body>
       </html>
     `);
@@ -26,7 +26,7 @@ describe('Horizontal Rule Button', () => {
     global.cancelAnimationFrame = (id) => clearTimeout(id);
 
     document = dom.window.document;
-    textarea = document.querySelector('textarea.prosemirror-enabled');
+    textarea = document.querySelector('textarea[data-editor-mode]');
   });
 
   afterEach(() => {
@@ -39,8 +39,8 @@ describe('Horizontal Rule Button', () => {
   });
 
   it('should initialize editor with HR button in toolbar', () => {
-    initProseMirrorEditor();
-    
+    initProseMirrorEditor('textarea');
+
     const api = textarea._editorAPI;
     expect(api).toBeDefined();
     
@@ -55,8 +55,8 @@ describe('Horizontal Rule Button', () => {
 
 More text`;
 
-    initProseMirrorEditor();
-    
+    initProseMirrorEditor('textarea');
+
     const api = textarea._editorAPI;
     
     // Switch to markdown mode to check serialization
@@ -84,7 +84,7 @@ Some paragraph content.
 
 Final paragraph.`;
 
-    initProseMirrorEditor();
+    initProseMirrorEditor('textarea');
     
     const api = textarea._editorAPI;
     

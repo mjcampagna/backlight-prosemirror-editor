@@ -22,7 +22,7 @@ describe('Initialization', () => {
     it('should use default selector when called without arguments', () => {
       initProseMirrorEditor()
       
-      expect(document.querySelectorAll).toHaveBeenCalledWith('textarea.prosemirror-enabled')
+      expect(document.querySelectorAll).toHaveBeenCalledWith('textarea[data-editor-mode]')
     })
 
     it('should use custom selector when provided', () => {

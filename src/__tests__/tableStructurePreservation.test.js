@@ -14,7 +14,7 @@ describe('Table Structure Preservation', () => {
       <!DOCTYPE html>
       <html>
         <body>
-          <textarea class="prosemirror-enabled"></textarea>
+          <textarea data-editor-mode="prosemirror"></textarea>
         </body>
       </html>
     `);
@@ -27,7 +27,7 @@ describe('Table Structure Preservation', () => {
     global.cancelAnimationFrame = (id) => clearTimeout(id);
 
     document = dom.window.document;
-    textarea = document.querySelector('textarea.prosemirror-enabled');
+    textarea = document.querySelector('textarea[data-editor-mode]');
   });
 
   afterEach(() => {
@@ -47,7 +47,7 @@ describe('Table Structure Preservation', () => {
 | Left     | Centered | Right    | 
 | Item A   | Item B   | Item C   |`;
 
-    initProseMirrorEditor();
+    initProseMirrorEditor('textarea');
     
     const api = textarea._editorAPI;
     
@@ -89,7 +89,7 @@ describe('Table Structure Preservation', () => {
 | Table 2 | Column 2 |
 | Data 2  | More     |`;
 
-    initProseMirrorEditor();
+    initProseMirrorEditor('textarea');
     
     const api = textarea._editorAPI;
     
@@ -116,7 +116,7 @@ Another paragraph.
 | Another | Table |
 | More    | Data  |`;
 
-    initProseMirrorEditor();
+    initProseMirrorEditor('textarea');
     
     const api = textarea._editorAPI;
     

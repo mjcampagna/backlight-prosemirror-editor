@@ -26,7 +26,7 @@
   </div>
 
   <div class="editor-wrap">
-    <textarea class="prosemirror-enabled">
+    <textarea data-editor-mode="prosemirror">
 # Hello Production!
 
 - This uses the **baseline CSS bundle**.
@@ -43,7 +43,7 @@
     try {
       const { initProseMirrorEditor } = await import("./dist/prosemirror-bundle.esm.js");
       console.log("✓ initProseMirrorEditor imported successfully");
-      initProseMirrorEditor();
+      initProseMirrorEditor('textarea');
     } catch (error) {
       console.error("Import failed:", error);
     }

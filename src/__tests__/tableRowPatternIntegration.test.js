@@ -14,7 +14,7 @@ describe('Table Row Pattern Integration', () => {
       <!DOCTYPE html>
       <html>
         <body>
-          <textarea class="prosemirror-enabled">This is a regular paragraph.
+          <textarea data-editor-mode="prosemirror">This is a regular paragraph.
 
 | Header 1 | Header 2 |
 | Value 1 | Value 2 |
@@ -33,7 +33,7 @@ Another paragraph.</textarea>
     global.cancelAnimationFrame = (id) => clearTimeout(id);
 
     document = dom.window.document;
-    textarea = document.querySelector('textarea.prosemirror-enabled');
+    textarea = document.querySelector('textarea[data-editor-mode]');
   });
 
   afterEach(() => {
@@ -47,7 +47,7 @@ Another paragraph.</textarea>
   });
 
   it('should initialize with mixed content including table rows', () => {
-    initProseMirrorEditor();
+    initProseMirrorEditor('textarea');
     
     const api = textarea._editorAPI;
     expect(api).toBeDefined();
@@ -62,7 +62,7 @@ Another paragraph.</textarea>
   });
 
   it('should preserve content when switching modes', () => {
-    initProseMirrorEditor();
+    initProseMirrorEditor('textarea');
     
     const api = textarea._editorAPI;
     
@@ -94,7 +94,7 @@ Another paragraph.</textarea>
 |Compact|Style|
 | Mixed   | Spacing  | Here |  `;
 
-    initProseMirrorEditor();
+    initProseMirrorEditor('textarea');
     
     const api = textarea._editorAPI;
     

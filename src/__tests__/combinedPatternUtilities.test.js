@@ -14,7 +14,7 @@ describe('Combined Pattern Utilities', () => {
       <!DOCTYPE html>
       <html>
         <body>
-          <textarea class="prosemirror-enabled">Regular text with \\* asterisk.
+          <textarea data-editor-mode="prosemirror">Regular text with \\* asterisk.
 
 | Table with \\| pipe and \\* asterisk |
 | Another \\| table \\* row \\_ here |
@@ -32,7 +32,7 @@ Final paragraph with \\* asterisk.</textarea>
     global.cancelAnimationFrame = (id) => clearTimeout(id);
 
     document = dom.window.document;
-    textarea = document.querySelector('textarea.prosemirror-enabled');
+    textarea = document.querySelector('textarea[data-editor-mode]');
   });
 
   afterEach(() => {
@@ -46,7 +46,7 @@ Final paragraph with \\* asterisk.</textarea>
   });
 
   it('should apply both pattern styling and pattern text processing', () => {
-    initProseMirrorEditor();
+    initProseMirrorEditor('textarea');
     
     const api = textarea._editorAPI;
     
@@ -83,7 +83,7 @@ Final paragraph with \\* asterisk.</textarea>
 
 | Spaced  \\|  table  \\*  row |`;
 
-    initProseMirrorEditor();
+    initProseMirrorEditor('textarea');
     
     const api = textarea._editorAPI;
     
@@ -108,7 +108,7 @@ Code snippet: const x = \\* 5;
 
 | Final \\| table |`;
 
-    initProseMirrorEditor();
+    initProseMirrorEditor('textarea');
     
     const api = textarea._editorAPI;
     api.switchTo('markdown');

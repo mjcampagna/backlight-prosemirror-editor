@@ -90,7 +90,7 @@
   </div>
 
   <div class="editor-wrap">
-    <textarea class="prosemirror-enabled">
+    <textarea data-editor-mode="prosemirror">
 # Dark Theme Demo
 
 - This uses **custom CSS variables** for theming.
@@ -115,7 +115,7 @@
   </script>
   <script type="module">
     import { initProseMirrorEditor } from "./dist/prosemirror-bundle.esm.js";
-    initProseMirrorEditor();
+    initProseMirrorEditor('textarea[data-editor-mode]');
   </script>
 </body>
 

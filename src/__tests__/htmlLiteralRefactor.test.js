@@ -13,7 +13,7 @@ describe('HTML Literal Plugin Refactor', () => {
       <!DOCTYPE html>
       <html>
         <body>
-          <textarea class="prosemirror-enabled">Regular paragraph.
+          <textarea data-editor-mode="prosemirror">Regular paragraph.
 
 <div class="example">HTML content here</div>
 
@@ -34,7 +34,7 @@ Final paragraph.</textarea>
     global.cancelAnimationFrame = (id) => clearTimeout(id);
 
     document = dom.window.document;
-    textarea = document.querySelector('textarea.prosemirror-enabled');
+    textarea = document.querySelector('textarea[data-editor-mode]');
   });
 
   afterEach(() => {
@@ -47,7 +47,7 @@ Final paragraph.</textarea>
   });
 
   it('should still detect and style HTML literal content after refactoring', () => {
-    initProseMirrorEditor();
+    initProseMirrorEditor('textarea');
     
     const api = textarea._editorAPI;
     expect(api).toBeDefined();
@@ -87,7 +87,7 @@ Final paragraph.</textarea>
 
 | Another | Table |`;
 
-    initProseMirrorEditor();
+    initProseMirrorEditor('textarea');
     
     const api = textarea._editorAPI;
     
