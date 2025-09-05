@@ -364,7 +364,7 @@ function wireEditorToggle(ta) {
 }
 
 // Configurable initialization function
-export function initProseMirrorEditor(selector = "textarea.prosemirror-enabled") {
+export function initProseMirrorEditor(selector = "textarea[data-editor-mode]") {
   document
     .querySelectorAll(selector)
     .forEach((ta) => wireEditorToggle(ta));
