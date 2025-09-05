@@ -74,36 +74,6 @@ export function markdownToolbarPlugin(options = {}) {
       const run = (cmd) => (view) => cmd(view.state, view.dispatch, view);
       const can = (cmd) => (state) => cmd(state);
 
-      if (schema.marks.strong) items.push(makeBtn({
-        label: "Bold", title: "Bold (Mod-B)",
-        icon: "bold",
-        run: run(toggleMark(schema.marks.strong)),
-        isActive: (s) => isMarkActive(s, schema.marks.strong),
-        isEnabled: can(toggleMark(schema.marks.strong))
-      }));
-      if (schema.marks.em) items.push(makeBtn({
-        label: "Italic", title: "Italic (Mod-I)",
-        icon: "italic",
-        run: run(toggleMark(schema.marks.em)),
-        isActive: (s) => isMarkActive(s, schema.marks.em),
-        isEnabled: can(toggleMark(schema.marks.em))
-      }));
-      if (schema.marks.code) items.push(makeBtn({
-        icon: "inline_code",
-        label: "Inline code",
-        title: "Inline code (Mod-`)",
-        run: run(toggleMark(schema.marks.code)),
-        isActive: (s) => isMarkActive(s, schema.marks.code),
-        isEnabled: can(toggleMark(schema.marks.code))
-      }));
-      if (schema.marks.link) items.push(makeBtn({
-        label: "Link", title: "Link (Mod-K)",
-        icon: "link",
-        run: (view) => createLinkCommand()(view.state, view.dispatch, view),
-        isActive: (s) => hasLink(s),
-        isEnabled: () => true
-      }));
-
       if (schema.nodes.paragraph && schema.nodes.heading) {
         const p = schema.nodes.paragraph, h = schema.nodes.heading;
         items.push(makeSelect({
@@ -141,6 +111,36 @@ export function markdownToolbarPlugin(options = {}) {
           }
         }));
       }
+
+      if (schema.marks.strong) items.push(makeBtn({
+        label: "Bold", title: "Bold (Mod-B)",
+        icon: "bold",
+        run: run(toggleMark(schema.marks.strong)),
+        isActive: (s) => isMarkActive(s, schema.marks.strong),
+        isEnabled: can(toggleMark(schema.marks.strong))
+      }));
+      if (schema.marks.em) items.push(makeBtn({
+        label: "Italic", title: "Italic (Mod-I)",
+        icon: "italic",
+        run: run(toggleMark(schema.marks.em)),
+        isActive: (s) => isMarkActive(s, schema.marks.em),
+        isEnabled: can(toggleMark(schema.marks.em))
+      }));
+      if (schema.marks.code) items.push(makeBtn({
+        icon: "inline_code",
+        label: "Inline code",
+        title: "Inline code (Mod-`)",
+        run: run(toggleMark(schema.marks.code)),
+        isActive: (s) => isMarkActive(s, schema.marks.code),
+        isEnabled: can(toggleMark(schema.marks.code))
+      }));
+      if (schema.marks.link) items.push(makeBtn({
+        label: "Link", title: "Link (Mod-K)",
+        icon: "link",
+        run: (view) => createLinkCommand()(view.state, view.dispatch, view),
+        isActive: (s) => hasLink(s),
+        isEnabled: () => true
+      }));
 
       if (schema.nodes.list_item) {
         const { bullet_list, ordered_list, list_item } = schema.nodes;
