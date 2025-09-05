@@ -3,46 +3,10 @@
 
 <head>
   <meta charset="utf-8" />
-  <title>ProseMirror Editor - Custom Theme Example</title>
+  <title>ProseMirror Editor - Dark Theme Example</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <!-- Essential editor styles -->
-  <link rel="stylesheet" href="./dist/prosemirror-bundle.css">
+  <!-- Demo: CSS loaded via Vite (baseline + demo styles) -->
   <style>
-    /* Custom theme using CSS variables */
-    :root {
-      /* Dark theme example */
-      --pm-editor-border: #444;
-      --pm-editor-border-focus: #666;
-      --pm-editor-bg: #1a1a1a;
-      --pm-editor-color: #e0e0e0;
-      
-      --pm-toolbar-bg: #2d2d2d;
-      --pm-toolbar-border: #444;
-      
-      --pm-btn-bg: #333;
-      --pm-btn-border: #555;
-      --pm-btn-color: #e0e0e0;
-      --pm-btn-bg-hover: #404040;
-      --pm-btn-border-hover: #666;
-      --pm-btn-color-hover: #fff;
-      --pm-btn-bg-active: #0066cc;
-      --pm-btn-border-active: #0088ff;
-      --pm-btn-color-active: #fff;
-      --pm-btn-color-disabled: #888;
-      
-      --pm-select-bg: #333;
-      --pm-select-border: #555;
-      --pm-select-color: #e0e0e0;
-      
-      --pm-blockquote-border: #555;
-      --pm-blockquote-bg: #2a2a2a;
-      --pm-blockquote-color: #ccc;
-      --pm-code-bg: #333;
-      --pm-code-color: #e0e0e0;
-      --pm-code-block-bg: #2a2a2a;
-      --pm-code-block-color: #e0e0e0;
-    }
-    
     /* Additional dark theme styles */
     body {
       background: #1a1a1a;
@@ -71,7 +35,7 @@
       text-align: center;
     }
     
-    .info {
+    .info.demo {
       background: #2d2d2d;
       color: #e0e0e0;
       padding: 15px;
@@ -83,10 +47,15 @@
 </head>
 
 <body>
-  <h1>🌙 Dark Theme Example</h1>
-  
-  <div class="info">
-    <strong>Custom Theme:</strong> This demonstrates how easy it is to customize the editor's appearance using CSS variables. Simply override the <code>--pm-*</code> variables to match your design.
+  <div class="nav">
+    <a href="/">← Home</a>
+    <a href="/demo.html">📱 Full Demo</a>
+    <a href="/baseline.html">⚡ Baseline</a>
+    <a href="/theme-example.html" class="current">🌙 Dark Theme</a>
+  </div>
+
+  <div class="info demo">
+    <strong>Dark Theme Example:</strong> This demonstrates how easy it is to customize the editor's appearance using CSS variables. Simply override the <code>--pm-*</code> variables to match your design system.
   </div>
 
   <div class="editor-wrap">
@@ -113,9 +82,70 @@
   <script>
     window.__PM_DEBUG = false
   </script>
+  <script type="module" src="/dev/main.js"></script>
   <script type="module">
-    import { initProseMirrorEditor } from "./dist/prosemirror-bundle.esm.js";
-    initProseMirrorEditor('textarea[data-editor-mode]');
+    // Apply dark theme after main.js loads the baseline CSS
+    const style = document.createElement('style');
+    style.textContent = `
+      /* Dark theme overrides - applied after baseline loads */
+      :root {
+        --pm-toggle-button-bg: transparent !important;
+        --pm-toggle-button-color: #64b5f6 !important;
+        --pm-toggle-button-bg-hover: rgba(100, 181, 246, 0.1) !important;
+        --pm-toggle-button-color-hover: #90caf9 !important;
+        
+        --pm-editor-border: #444 !important;
+        --pm-editor-border-focus: #64b5f6 !important;
+        --pm-editor-bg: #1a1a1a !important;
+        --pm-editor-color: #e0e0e0 !important;
+        
+        --pm-toolbar-bg: #2d2d2d !important;
+        --pm-toolbar-border: #444 !important;
+        
+        --pm-btn-bg: #333 !important;
+        --pm-btn-border: #555 !important;
+        --pm-btn-color: #e0e0e0 !important;
+        --pm-btn-bg-hover: #404040 !important;
+        --pm-btn-border-hover: #666 !important;
+        --pm-btn-color-hover: #fff !important;
+        --pm-btn-bg-active: #1976d2 !important;
+        --pm-btn-border-active: #42a5f5 !important;
+        --pm-btn-color-active: #fff !important;
+        --pm-btn-color-disabled: #888 !important;
+        
+        /* Select colors */
+        --pm-select-bg: #333 !important;
+        --pm-select-border: #555 !important;
+        --pm-select-color: #e0e0e0 !important;
+        
+        --pm-blockquote-border: #555 !important;
+        --pm-blockquote-bg: #2a2a2a !important;
+        --pm-blockquote-color: #ccc !important;
+        --pm-code-bg: #333 !important;
+        --pm-code-color: #e0e0e0 !important;
+        --pm-code-block-bg: #2a2a2a !important;
+        --pm-code-block-color: #e0e0e0 !important;
+        
+        --pm-link-color: #64b5f6 !important;
+        --pm-link-color-hover: #90caf9 !important;
+        --pm-link-color-visited: #ba68c8 !important;
+        
+        --pm-table-bg: rgba(100, 181, 246, 0.08) !important;
+        --pm-table-border: #64b5f6 !important;
+        --pm-table-color: #e0e0e0 !important;
+        --pm-table-invalid-bg: rgba(244, 67, 54, 0.08) !important;
+        --pm-table-invalid-border: #f44336 !important;
+        --pm-table-invalid-color: #ffcdd2 !important;
+      }
+      
+      /* Dark theme layout overrides */
+      .info {
+        background: #2d2d2d !important;
+        color: #e0e0e0 !important;
+        border: 1px solid #444 !important;
+      }
+    `;
+    document.head.appendChild(style);
   </script>
 </body>
 
