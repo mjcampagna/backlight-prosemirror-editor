@@ -68,6 +68,8 @@ export function markdownToolbarPlugin(options = {}) {
     view(editorView) {
       const toolbar = document.createElement("div");
       toolbar.className = "pm-toolbar";
+      toolbar.setAttribute("role", "toolbar");
+      toolbar.setAttribute("aria-label", "Editor formatting tools");
 
       const items = [];
       const { schema } = editorView.state;

@@ -11,17 +11,19 @@ describe('Enhanced Initialization Capabilities', () => {
     document = dom.window.document;
     global.document = document;
     global.window = dom.window;
-    global.alert = vi.fn();
     global.requestAnimationFrame = vi.fn((cb) => cb());
     global.cancelAnimationFrame = vi.fn();
+    
+    // Mock console.warn
+    vi.spyOn(console, 'warn').mockImplementation(() => {});
   });
 
   afterEach(() => {
     delete global.document;
     delete global.window;
-    delete global.alert;
     delete global.requestAnimationFrame;
     delete global.cancelAnimationFrame;
+    vi.restoreAllMocks();
   });
 
   describe('Flexible Selector Support', () => {
@@ -104,11 +106,11 @@ describe('Enhanced Initialization Capabilities', () => {
       });
     });
 
-    it('should show alert and skip non-textarea elements', () => {
+    it('should warn and skip non-textarea elements', () => {
       initProseMirrorEditor('.not-textarea');
       
-      expect(global.alert).toHaveBeenCalledWith(
-        'Error: initProseMirrorEditor requires textarea elements. Found: div'
+      expect(console.warn).toHaveBeenCalledWith(
+        '[ProseMirror] Skipping non-textarea element: div. initProseMirrorEditor requires textarea elements.'
       );
       
       const div = document.querySelector('.not-textarea');
@@ -193,27 +195,27 @@ describe('Enhanced Initialization Capabilities', () => {
       `;
     });
 
-    it('should alert for div elements', () => {
+    it('should warn for div elements', () => {
       initProseMirrorEditor('#not-textarea');
       
-      expect(global.alert).toHaveBeenCalledWith(
-        'Error: initProseMirrorEditor requires textarea elements. Found: div'
+      expect(console.warn).toHaveBeenCalledWith(
+        '[ProseMirror] Skipping non-textarea element: div. initProseMirrorEditor requires textarea elements.'
       );
     });
 
-    it('should alert for span elements', () => {
+    it('should warn for span elements', () => {
       initProseMirrorEditor('.also-not-textarea');
       
-      expect(global.alert).toHaveBeenCalledWith(
-        'Error: initProseMirrorEditor requires textarea elements. Found: span'
+      expect(console.warn).toHaveBeenCalledWith(
+        '[ProseMirror] Skipping non-textarea element: span. initProseMirrorEditor requires textarea elements.'
       );
     });
 
-    it('should alert for input elements', () => {
+    it('should warn for input elements', () => {
       initProseMirrorEditor('.input-element');
       
-      expect(global.alert).toHaveBeenCalledWith(
-        'Error: initProseMirrorEditor requires textarea elements. Found: input'
+      expect(console.warn).toHaveBeenCalledWith(
+        '[ProseMirror] Skipping non-textarea element: input. initProseMirrorEditor requires textarea elements.'
       );
     });
 
@@ -221,8 +223,8 @@ describe('Enhanced Initialization Capabilities', () => {
       // Mix valid and invalid selectors
       initProseMirrorEditor('div, textarea');
       
-      // Should alert for div but still initialize textarea
-      expect(global.alert).toHaveBeenCalled();
+      // Should warn for div but still initialize textarea
+      expect(console.warn).toHaveBeenCalled();
       
       const textarea = document.querySelector('textarea');
       expect(textarea._editorAPI).toBeDefined();
@@ -233,8 +235,8 @@ describe('Enhanced Initialization Capabilities', () => {
         initProseMirrorEditor('.nonexistent-element');
       }).not.toThrow();
       
-      // Should not call alert since no elements matched
-      expect(global.alert).not.toHaveBeenCalled();
+      // Should not warn since no elements matched
+      expect(console.warn).not.toHaveBeenCalled();
     });
   });
 

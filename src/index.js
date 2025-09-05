@@ -196,7 +196,7 @@ class ProseMirrorView extends BaseView {
     // markActive called by super()
   }
 
-  // Serialize editor → textarea (throttled with rAF)
+  // Serialize editor → textarea (debounced for performance)
   _syncToMirror(force = false) {
     if (!this.mirror) return;
     const run = () => {
@@ -205,12 +205,18 @@ class ProseMirrorView extends BaseView {
       if (this.mirror.value !== md) this.mirror.value = md;
     };
     if (force) {
+      if (this._debounceTimer) clearTimeout(this._debounceTimer);
       if (this._raf) cancelAnimationFrame(this._raf);
       run();
     } else {
       if (this._syncScheduled) return;
       this._syncScheduled = true;
-      this._raf = requestAnimationFrame(run);
+      
+      // Debounce for better performance on large docs
+      if (this._debounceTimer) clearTimeout(this._debounceTimer);
+      this._debounceTimer = setTimeout(() => {
+        this._raf = requestAnimationFrame(run);
+      }, 300);
     }
   }
   _scheduleSync() { this._syncToMirror(false); }
@@ -225,6 +231,10 @@ class ProseMirrorView extends BaseView {
     if (this._destroyed) return;
     
     // Cancel scheduled work
+    if (this._debounceTimer) {
+      clearTimeout(this._debounceTimer);
+      this._debounceTimer = null;
+    }
     if (this._raf) {
       cancelAnimationFrame(this._raf);
       this._raf = null;
@@ -308,8 +318,14 @@ function wireEditorToggle(element, initialMode = MODES.PROSEMIRROR) {
     
     btn = document.createElement("button");
     btn.type = "button";
-    btn.setAttribute("aria-label", "Editor mode");
+    btn.setAttribute("aria-label", "Toggle editor mode");
+    btn.setAttribute("aria-controls", element.id || `editor-${Date.now()}`);
     btn.className = CSS_CLASSES.TOGGLE_BUTTON;
+    
+    // Ensure element has ID for aria-controls
+    if (!element.id) {
+      element.id = `editor-${Date.now()}`;
+    }
     
     btnWrapper.appendChild(btn);
     element.parentElement.insertBefore(btnWrapper, element);
@@ -324,6 +340,7 @@ function wireEditorToggle(element, initialMode = MODES.PROSEMIRROR) {
     btn.textContent = labelFor(view.mode);
     btn.setAttribute("data-editor-mode", view.mode);
     btn.setAttribute("aria-pressed", view.mode === MODES.MARKDOWN ? "true" : "false");
+    btn.setAttribute("title", `Current mode: ${view.mode}. Click ${labelFor(view.mode)}`);
   }
 
   // Switch function used by the button (and available for you to call)
@@ -353,7 +370,21 @@ function wireEditorToggle(element, initialMode = MODES.PROSEMIRROR) {
     }
 
     updateButton();
-    view.focus();
+    
+    // Focus with proper scroll behavior
+    setTimeout(() => {
+      view.focus();
+      // Ensure focused element is visible (safely handle missing scrollIntoView in tests)
+      try {
+        if (view.view?.dom?.scrollIntoView) {
+          view.view.dom.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+        } else if (view.textarea?.scrollIntoView) {
+          view.textarea.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+        }
+      } catch (e) {
+        // Ignore scroll errors in test environments
+      }
+    }, 0);
   }
 
   // Initial label
@@ -385,7 +416,7 @@ export function initProseMirrorEditor(selector = "textarea[data-editor-mode]") {
     .forEach((element) => {
       // Ensure element is a textarea
       if (!isTextarea(element)) {
-        alert(`Error: initProseMirrorEditor requires textarea elements. Found: ${element.tagName.toLowerCase()}`);
+        console.warn(`[ProseMirror] Skipping non-textarea element: ${element.tagName.toLowerCase()}. initProseMirrorEditor requires textarea elements.`);
         return;
       }
       
