@@ -1,4 +1,6 @@
 // Enhanced link extension with target="_blank" support and HTML serialization
+// Note: Links with target="_blank" are serialized as HTML to preserve attributes.
+// Per GFM spec, HTML links in markdown remain as HTML and are not parsed back to link marks.
 
 export const enhancedLinkExtension = {
   name: "enhancedLink",
