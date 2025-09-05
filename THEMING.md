@@ -4,6 +4,17 @@ The ProseMirror editor uses CSS variables for easy theming and customization.
 
 ## CSS Variables
 
+### Toggle Button Variables
+```css
+:root {
+  --pm-toggle-button-bg: transparent;    /* Toggle button background */
+  --pm-toggle-button-color: #2196F3;     /* Toggle button text color */
+  --pm-toggle-button-bg-hover: transparent; /* Toggle button hover background */
+  --pm-toggle-button-color-hover: #1565C0;  /* Toggle button hover text color */
+  --pm-border-radius: 8px;               /* Global border radius */
+}
+```
+
 ### Editor Variables
 ```css
 :root {
@@ -65,6 +76,11 @@ The ProseMirror editor uses CSS variables for easy theming and customization.
 ### Dark Theme
 ```css
 :root {
+  --pm-toggle-button-bg: transparent;
+  --pm-toggle-button-color: #64b5f6;
+  --pm-toggle-button-bg-hover: rgba(100, 181, 246, 0.1);
+  --pm-toggle-button-color-hover: #90caf9;
+  
   --pm-editor-border: #444;
   --pm-editor-border-focus: #666;
   --pm-editor-bg: #1a1a1a;
@@ -110,9 +126,12 @@ The ProseMirror editor uses CSS variables for easy theming and customization.
 ### Brand Colors
 ```css
 :root {
+  --pm-toggle-button-color: #your-brand-color;
+  --pm-toggle-button-color-hover: #your-brand-color-dark;
   --pm-btn-bg-active: #your-brand-color;
   --pm-btn-border-active: #your-brand-color;
   --pm-editor-border-focus: #your-brand-color;
+  --pm-modal-btn-primary-bg: #your-brand-color;
 }
 ```
 
