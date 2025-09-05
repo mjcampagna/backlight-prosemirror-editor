@@ -116,6 +116,7 @@
 			background: var(--pm-btn-bg-hover);
 			border-color: var(--pm-btn-border-hover);
 			color: var(--pm-btn-color-hover);
+			transform: translateZ(0); /* Hardware acceleration for smoother hover */
 		}
 
 		.pm-btn.active {
@@ -189,6 +190,11 @@
 
 		a:visited {
 			color: var(--pm-link-color-visited);
+		}
+
+		a:focus {
+			outline: 2px solid var(--pm-modal-input-border-focus);
+			outline-offset: 2px;
 		}
 
 		blockquote,
@@ -290,6 +296,11 @@
 			padding: 0;
 		}
 
+		/* Selection styling */
+		::selection {
+			background: rgba(66, 133, 244, 0.2);
+		}
+
 		/* Lists */
 		ul, ol {
 			display: block;
@@ -306,9 +317,42 @@
 
 		li {
 			display: list-item;
+			margin-block: 0.25em;
 		}
 
+		li p {
+			margin-block: 0;
+		}
 
+		ol li::marker {
+			font-size: 0.75em;
+		}
+
+		ul li::marker {
+			font-size: 0.875em;
+		}
+
+		/* Nested list spacing refinement */
+		ul ul, ol ol, ul ol, ol ul {
+			margin-top: 0.5em;
+		}
+
+		ul ul, ol ul {
+			list-style-type: circle;
+		}
+
+		ol ol, ul ol {
+			list-style-type: lower-alpha;
+		}
+
+		/* Bold and italic styling */
+		b, strong {
+			font-weight: 600;
+		}
+
+		cite, i, em {
+			font-style: italic;
+		}
 
 		/* HTML literal extension styling */
 		.pm-html-literal {
@@ -345,6 +389,12 @@
 	.ProseMirror-focused {
 		border-color: var(--pm-editor-border-focus);
 	}
+}
+
+/* Container focus state */
+.pm-editor-container:focus-within {
+	box-shadow: 0 0 0 2px rgba(66, 133, 244, 0.2);
+	border-radius: 8px;
 }
 
 /* Modal dialog styles */
