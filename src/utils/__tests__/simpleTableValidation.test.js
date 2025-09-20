@@ -38,17 +38,17 @@ describe('Simple Table Validation', () => {
       // GFM requires header + separator minimum
       expect(validateTableStructure('| Header')).toEqual({
         isValid: false,
-        cssClass: 'pm-table-invalid'
+        cssClass: 'pm-block-invalid'
       });
       
       expect(validateTableStructure('|-')).toEqual({
         isValid: false,
-        cssClass: 'pm-table-invalid'
+        cssClass: 'pm-block-invalid'
       });
       
       expect(validateTableStructure('| Data | More')).toEqual({
         isValid: false,
-        cssClass: 'pm-table-invalid'
+        cssClass: 'pm-block-invalid'
       });
     });
 

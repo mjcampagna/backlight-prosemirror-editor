@@ -71,9 +71,11 @@
 	--pm-table-bg: #f8f9ff;
 	--pm-table-border: #4a90e2;
 	--pm-table-color: inherit;
-	--pm-table-invalid-bg: #fff8f8;
-	--pm-table-invalid-border: #dc3545;
-	--pm-table-invalid-color: inherit;
+
+	/* Invalid block colors */
+	--pm-block-invalid-bg: #fff8f8;
+	--pm-block-invalid-border: #dc3545;
+	--pm-block-invalid-color: inherit;
 }
 
 /* Toggle editor mode button */
@@ -421,12 +423,12 @@
 			padding: 0.5em 0.8em;
 		}
 
-		/* Invalid table pattern styling */
-		.pm-table-invalid {
-			background: var(--pm-table-invalid-bg);
-			border-left: 3px solid var(--pm-table-invalid-border);
+		/* Invalid block pattern styling */
+		.pm-block-invalid {
+			background: var(--pm-block-invalid-bg);
+			border-left: 3px solid var(--pm-block-invalid-border);
 			border-radius: 3px;
-			color: var(--pm-table-invalid-color);
+			color: var(--pm-block-invalid-color);
 			font-family: var(--pm-code-font, 'Monaco', 'Menlo', 'Ubuntu Mono', monospace);
 			padding: 0.5em 0.8em;
 		}

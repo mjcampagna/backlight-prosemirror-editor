@@ -124,7 +124,7 @@ export function isTableSeparatorRow(line) {
  */
 export function validateTableStructureWithSerialization(node, serializer) {
   if (!node || !serializer) {
-    return { isValid: false, cssClass: 'pm-table-invalid' };
+    return { isValid: false, cssClass: 'pm-block-invalid' };
   }
 
   try {
@@ -137,12 +137,12 @@ export function validateTableStructureWithSerialization(node, serializer) {
       .filter(line => line && line.startsWith('|'));
     
     if (tableLines.length === 0) {
-      return { isValid: false, cssClass: 'pm-table-invalid' };
+      return { isValid: false, cssClass: 'pm-block-invalid' };
     }
     
     if (tableLines.length === 1) {
       // Single row - invalid per GFM (requires header + separator minimum)
-      return { isValid: false, cssClass: 'pm-table-invalid' };
+      return { isValid: false, cssClass: 'pm-block-invalid' };
     }
     
     // Multiple rows - apply GFM validation  
@@ -156,14 +156,14 @@ export function validateTableStructureWithSerialization(node, serializer) {
       if (headerCells === separatorCells) {
         return { isValid: true, cssClass: 'pm-table' };
       }
-      return { isValid: false, cssClass: 'pm-table-invalid' };
+      return { isValid: false, cssClass: 'pm-block-invalid' };
     }
     
-    return { isValid: false, cssClass: 'pm-table-invalid' };
+    return { isValid: false, cssClass: 'pm-block-invalid' };
     
   } catch (error) {
     console.warn('Table validation error:', error);
-    return { isValid: false, cssClass: 'pm-table-invalid' };
+    return { isValid: false, cssClass: 'pm-block-invalid' };
   }
 }
 
@@ -175,7 +175,7 @@ export function validateTableStructureWithSerialization(node, serializer) {
 export function validateTableStructure(text) {
   // Simple fallback for tests - single rows invalid per GFM
   if (!text || !text.trim() || !text.includes('|') || !text.trim().startsWith('|')) {
-    return { isValid: false, cssClass: 'pm-table-invalid' };
+    return { isValid: false, cssClass: 'pm-block-invalid' };
   }
   
   // Check if this has multiple lines (would be valid)
@@ -185,5 +185,5 @@ export function validateTableStructure(text) {
   }
   
   // Single line - invalid per GFM
-  return { isValid: false, cssClass: 'pm-table-invalid' };
+  return { isValid: false, cssClass: 'pm-block-invalid' };
 }
