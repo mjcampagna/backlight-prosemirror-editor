@@ -55,15 +55,21 @@ export function createGfmCompliantEscapingPlugin(unescapeChars = ['|', '*', '_',
 }
 
 /**
- * Process markdown content to unescape characters only within table rows
- * Uses a more precise table detection that requires proper GFM table structure
+ * Process markdown content to unescape characters with GFM-compliant rules
+ * - Unescapes specified characters within table rows
+ * - Globally unescapes double tildes for strikethrough (~~)
+ * - Preserves single tilde escaping to maintain GFM compliance
  * 
  * @param {string} markdown - The markdown content
- * @param {string[]} unescapeChars - Characters to unescape
+ * @param {string[]} unescapeChars - Characters to unescape in table contexts
  * @returns {string} - Processed markdown
  */
 function processTableContent(markdown, unescapeChars) {
-  const lines = markdown.split('\n');
+  // First, apply global double tilde unescaping for strikethrough
+  let result = unescapeDoubleTildes(markdown);
+  
+  // Then apply table-specific unescaping
+  const lines = result.split('\n');
   const processedLines = [];
   let inTable = false;
   let tableRowCount = 0;
@@ -94,12 +100,34 @@ function processTableContent(markdown, unescapeChars) {
       processedLines.push(unescapeTableRowCharacters(line, unescapeChars));
       if (isTableRow) tableRowCount++;
     } else {
-      // Regular line - don't unescape anything
+      // Regular line - don't unescape anything (double tildes already processed)
       processedLines.push(line);
     }
   }
 
   return processedLines.join('\n');
+}
+
+/**
+ * Unescape double tildes for strikethrough while preserving single tilde escaping
+ * This enables ~~strikethrough~~ functionality while maintaining GFM compliance
+ * 
+ * @param {string} text - The text to process
+ * @returns {string} - Text with double tildes unescaped
+ */
+function unescapeDoubleTildes(text) {
+  // We need to be careful to only unescape patterns intended for strikethrough
+  // while preserving other escape sequences
+  
+  // Handle escaped double tildes that should become strikethrough
+  // Pattern: \~\~ (two escaped tildes) -> ~~ (unescaped for strikethrough)
+  text = text.replace(/\\~\\~/g, '~~');
+  
+  // Also handle the case where someone escaped the whole strikethrough pattern
+  // Pattern: \\~~text~~ -> ~~text~~ (preserve strikethrough)  
+  text = text.replace(/\\\\~~/g, '~~');
+  
+  return text;
 }
 
 /**
