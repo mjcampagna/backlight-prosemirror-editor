@@ -156,8 +156,10 @@ class ProseMirrorView extends BaseView {
       this._ownsMirror = true;
     }
 
-    // Create combined text processing: existing table processing + double tilde unescaping + tagfilter
-    const tableRowPlugin = createTableRowTextProcessingPlugin(); // Keep original table logic
+    // Create modified table processing without global tilde unescaping to preserve GFM compliance
+    const tableRowPlugin = createTableRowTextProcessingPlugin({
+      globalUnescapeChars: [] // Remove global tilde unescaping to preserve GFM compliance
+    });
     const tagfilterPlugin = createTagfilterTextProcessingPlugin();
     
     // Create a simple double tilde unescaping plugin
