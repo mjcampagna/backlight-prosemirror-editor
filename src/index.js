@@ -5,6 +5,7 @@ import { enhancedLinkExtension } from "./extensions/enhancedLink.js";
 import { tableRowSplittingExtension } from "./extensions/tableRowSplitting.js";
 import { tagfilterExtension, createTagfilterTextProcessingPlugin } from "./extensions/tagfilter.js";
 import { gfmCompliantEscapingExtension, createGfmCompliantEscapingPlugin } from "./extensions/gfmCompliantEscaping.js";
+import { createTableRowTextProcessingPlugin } from "./patternTextProcessingPlugin.js";
 
 import buildMarkdownPlugins from "./markdownToolbarPlugin.js";
 import htmlLiteralStylingPlugin from "./htmlLiteralStylingPlugin.js";
@@ -155,23 +156,42 @@ class ProseMirrorView extends BaseView {
       this._ownsMirror = true;
     }
 
-    // Create combined text processing with GFM-compliant escaping and tagfilter
-    const gfmEscapingPlugin = createGfmCompliantEscapingPlugin();
+    // Create combined text processing: existing table processing + double tilde unescaping + tagfilter
+    const tableRowPlugin = createTableRowTextProcessingPlugin(); // Keep original table logic
     const tagfilterPlugin = createTagfilterTextProcessingPlugin();
+    
+    // Create a simple double tilde unescaping plugin
+    const doubleTildePlugin = {
+      name: "doubleTildeUnescaping",
+      enhanceSerializer(mdSerializer) {
+        const originalSerialize = mdSerializer.serialize.bind(mdSerializer);
+        mdSerializer.serialize = function(content, options) {
+          let result = originalSerialize(content, options);
+          
+          // Global double tilde unescaping for strikethrough
+          result = result.replace(/\\~\\~/g, '~~');
+          result = result.replace(/\\\\~~/g, '~~');
+          
+          return result;
+        };
+        return mdSerializer;
+      }
+    };
     
     // Combine plugins by chaining their enhance methods
     const combinedTextProcessing = {
-      name: "combinedTextProcessing",
+      name: "combinedTextProcessing",  
       enhanceSerializer(mdSerializer) {
-        // Apply GFM-compliant escaping first, then tagfilter
-        let enhanced = gfmEscapingPlugin.enhanceSerializer(mdSerializer);
+        // Apply original table processing, then double tilde unescaping, then tagfilter
+        let enhanced = tableRowPlugin.enhanceSerializer(mdSerializer);
+        enhanced = doubleTildePlugin.enhanceSerializer(enhanced);
         enhanced = tagfilterPlugin.enhanceSerializer(enhanced);
         return enhanced;
       }
     };
 
     // Create markdown system with extensions and combined text processing
-    const markdownSystem = createMarkdownSystem([enhancedLinkExtension, tableRowSplittingExtension, tagfilterExtension, gfmCompliantEscapingExtension], {
+    const markdownSystem = createMarkdownSystem([enhancedLinkExtension, tableRowSplittingExtension, tagfilterExtension], {
       textProcessing: combinedTextProcessing
     });
     const { schema, mdParser, mdSerializer, keymapPlugins } = markdownSystem;

@@ -16,8 +16,9 @@ describe('Combined Pattern Utilities', () => {
         <body>
           <textarea data-editor-mode="prosemirror">Regular text with \\* asterisk.
 
-| Table with \\| pipe and \\* asterisk |
-| Another \\| table \\* row \\_ here |
+| Table with \\| pipe and \\* asterisk | Column |
+| --- | --- |
+| Another \\| table \\* row \\_ here | Data |
 
 Final paragraph with \\* asterisk.</textarea>
         </body>
@@ -60,8 +61,8 @@ Final paragraph with \\* asterisk.</textarea>
     
     // Table rows should be properly structured (each on separate lines now)
     // Characters should be properly unescaped in table content
-    expect(markdownContent).toContain('| Table with | pipe and * asterisk |');
-    expect(markdownContent).toContain('| Another | table * row _ here |');
+    expect(markdownContent).toContain('| Table with | pipe and * asterisk | Column |');
+    expect(markdownContent).toContain('| Another | table * row _ here | Data |');
     
     // Switch back to ProseMirror mode
     api.switchTo('prosemirror');
@@ -75,13 +76,17 @@ Final paragraph with \\* asterisk.</textarea>
   });
 
   it('should handle various table row patterns with unescaping', () => {
-    textarea.value = `| Simple \\| table |
+    textarea.value = `| Simple \\| table | Column |
+| --- | --- |
 
-| Complex \\| table \\* with \\_ chars |   
+| Complex \\| table \\* with \\_ chars | Data |
+| --- | --- |
 
-|Compact\\|style|
+|Compact|style|
+|---|---|
 
-| Spaced  \\|  table  \\*  row |`;
+| Spaced  \\|  table  \\*  row | Data |
+| --- | --- |`;
 
     initProseMirrorEditor('textarea');
     
@@ -92,21 +97,23 @@ Final paragraph with \\* asterisk.</textarea>
     const content = api.view.content;
     
     // All table patterns should have unescaped characters
-    expect(content).toContain('| Simple | table |');
-    expect(content).toContain('| Complex | table * with _ chars |');
+    expect(content).toContain('| Simple | table | Column |');
+    expect(content).toContain('| Complex | table * with _ chars | Data |');
     expect(content).toContain('|Compact|style|');
-    expect(content).toContain('| Spaced  |  table  *  row |');
+    expect(content).toContain('| Spaced  |  table  *  row | Data |');
   });
 
   it('should work with mixed content including non-table patterns', () => {
     textarea.value = `Here's some \\* emphasized text.
 
-| Table \\| row |
-| Another \\* row |
+| Table \\| row | Column |
+| --- | --- |
+| Another \\* row | Data |
 
 Code snippet: const x = \\* 5;
 
-| Final \\| table |`;
+| Final \\| table | Data |
+| --- | --- |`;
 
     initProseMirrorEditor('textarea');
     
@@ -119,8 +126,8 @@ Code snippet: const x = \\* 5;
     expect(content).toContain('Code snippet: const x = \\* 5;');
     
     // Table content should be properly structured
-    expect(content).toContain('| Table | row |');
-    expect(content).toContain('| Another * row |');
-    expect(content).toContain('| Final | table |');
+    expect(content).toContain('| Table | row | Column |');
+    expect(content).toContain('| Another * row | Data |');
+    expect(content).toContain('| Final | table | Data |');
   });
 });
