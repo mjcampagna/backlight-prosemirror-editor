@@ -4,11 +4,12 @@ import { createMarkdownSystem } from "./markdownSystem.js";
 import { enhancedLinkExtension } from "./extensions/enhancedLink.js";
 import { tableRowSplittingExtension } from "./extensions/tableRowSplitting.js";
 import { tagfilterExtension, createTagfilterTextProcessingPlugin } from "./extensions/tagfilter.js";
+import { gfmCompliantEscapingExtension, createGfmCompliantEscapingPlugin } from "./extensions/gfmCompliantEscaping.js";
 
 import buildMarkdownPlugins from "./markdownToolbarPlugin.js";
 import htmlLiteralStylingPlugin from "./htmlLiteralStylingPlugin.js";
 import { createTableRowStylingPlugin } from "./patternNodeStylingPlugin.js";
-import { createTableRowTextProcessingPlugin } from "./patternTextProcessingPlugin.js";
+// Removed: import { createTableRowTextProcessingPlugin } from "./patternTextProcessingPlugin.js";
 import { presets } from "./plugins/textProcessing.js";
 
 // --- Constants ---
@@ -154,23 +155,23 @@ class ProseMirrorView extends BaseView {
       this._ownsMirror = true;
     }
 
-    // Create combined text processing with table row processing and tagfilter
-    const tableRowPlugin = createTableRowTextProcessingPlugin();
+    // Create combined text processing with GFM-compliant escaping and tagfilter
+    const gfmEscapingPlugin = createGfmCompliantEscapingPlugin();
     const tagfilterPlugin = createTagfilterTextProcessingPlugin();
     
     // Combine plugins by chaining their enhance methods
     const combinedTextProcessing = {
       name: "combinedTextProcessing",
       enhanceSerializer(mdSerializer) {
-        // Apply table row processing first, then tagfilter
-        let enhanced = tableRowPlugin.enhanceSerializer(mdSerializer);
+        // Apply GFM-compliant escaping first, then tagfilter
+        let enhanced = gfmEscapingPlugin.enhanceSerializer(mdSerializer);
         enhanced = tagfilterPlugin.enhanceSerializer(enhanced);
         return enhanced;
       }
     };
 
     // Create markdown system with extensions and combined text processing
-    const markdownSystem = createMarkdownSystem([enhancedLinkExtension, tableRowSplittingExtension, tagfilterExtension], {
+    const markdownSystem = createMarkdownSystem([enhancedLinkExtension, tableRowSplittingExtension, tagfilterExtension, gfmCompliantEscapingExtension], {
       textProcessing: combinedTextProcessing
     });
     const { schema, mdParser, mdSerializer, keymapPlugins } = markdownSystem;
