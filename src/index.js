@@ -3,6 +3,7 @@ import { EditorView } from "prosemirror-view";
 import { createMarkdownSystem } from "./markdownSystem.js";
 import { enhancedLinkExtension } from "./extensions/enhancedLink.js";
 import { tableRowSplittingExtension } from "./extensions/tableRowSplitting.js";
+import { tagfilterExtension, createTagfilterTextProcessingPlugin } from "./extensions/tagfilter.js";
 
 import buildMarkdownPlugins from "./markdownToolbarPlugin.js";
 import htmlLiteralStylingPlugin from "./htmlLiteralStylingPlugin.js";
@@ -153,9 +154,24 @@ class ProseMirrorView extends BaseView {
       this._ownsMirror = true;
     }
 
-    // Create markdown system with extensions and text processing
-    const markdownSystem = createMarkdownSystem([enhancedLinkExtension, tableRowSplittingExtension], {
-      textProcessing: createTableRowTextProcessingPlugin() // Enable pattern-based text processing
+    // Create combined text processing with table row processing and tagfilter
+    const tableRowPlugin = createTableRowTextProcessingPlugin();
+    const tagfilterPlugin = createTagfilterTextProcessingPlugin();
+    
+    // Combine plugins by chaining their enhance methods
+    const combinedTextProcessing = {
+      name: "combinedTextProcessing",
+      enhanceSerializer(mdSerializer) {
+        // Apply table row processing first, then tagfilter
+        let enhanced = tableRowPlugin.enhanceSerializer(mdSerializer);
+        enhanced = tagfilterPlugin.enhanceSerializer(enhanced);
+        return enhanced;
+      }
+    };
+
+    // Create markdown system with extensions and combined text processing
+    const markdownSystem = createMarkdownSystem([enhancedLinkExtension, tableRowSplittingExtension, tagfilterExtension], {
+      textProcessing: combinedTextProcessing
     });
     const { schema, mdParser, mdSerializer, keymapPlugins } = markdownSystem;
     
