@@ -30,56 +30,59 @@ export const HTML_BLOCK_TYPES = {
 
 /**
  * Check if a line starts an HTML block and determine its type
- * @param {string} line - The line to check
+ * @param {string} line - The line to check (preserves indentation)
  * @returns {number|null} HTML block type (1-7) or null if not an HTML block start
  */
 export function getHtmlBlockStartType(line) {
-  const trimmed = line.trim();
+  // GFM requires ≤3 spaces of indentation, no other characters before <
+  const indentMatch = line.match(/^ {0,3}(.*)$/);
+  if (!indentMatch) return null;
   
-  if (!trimmed) return null;
+  const afterIndent = indentMatch[1];
+  if (!afterIndent || !afterIndent.startsWith('<')) return null;
   
   // Type 1: Script, style, pre tags
-  if (/^<(?:script|pre|style)(?:\s|>|$)/i.test(trimmed)) {
+  if (/^<(?:script|pre|style)(?:\s|>|$)/i.test(afterIndent)) {
     return HTML_BLOCK_TYPES.SCRIPT_STYLE_PRE;
   }
   
   // Type 2: Comments
-  if (trimmed.startsWith('<!--')) {
+  if (afterIndent.startsWith('<!--')) {
     return HTML_BLOCK_TYPES.COMMENT;
   }
   
   // Type 3: Processing instructions
-  if (trimmed.startsWith('<?')) {
+  if (afterIndent.startsWith('<?')) {
     return HTML_BLOCK_TYPES.PROCESSING_INSTRUCTION;
   }
   
-  // Type 4: Declarations
-  if (/^<!([A-Z]+)/i.test(trimmed)) {
+  // Type 4: Declarations (case-sensitive per GFM spec)
+  if (/^<![A-Z]+\b/.test(afterIndent)) {
     return HTML_BLOCK_TYPES.DECLARATION;
   }
   
   // Type 5: CDATA sections
-  if (trimmed.startsWith('<![CDATA[')) {
+  if (afterIndent.startsWith('<![CDATA[')) {
     return HTML_BLOCK_TYPES.CDATA;
   }
   
   // Type 6: Block-level tags
-  const blockTagMatch = trimmed.match(/^<\/?([a-zA-Z][a-zA-Z0-9-]*)/);
+  const blockTagMatch = afterIndent.match(/^<\/?([a-zA-Z][a-zA-Z0-9-]*)/);
   if (blockTagMatch) {
     const tagName = blockTagMatch[1].toLowerCase();
     if (BLOCK_LEVEL_TAGS.has(tagName)) {
-      // Must be a complete tag: followed by whitespace + attributes + >, just >, or />
-      if (/^<\/?[a-zA-Z][a-zA-Z0-9-]*(?:\s[^>]*>|\/?>|>)/.test(trimmed)) {
+      // Must be a complete tag - improved regex to handle > in attribute values
+      if (/^<\/?[a-zA-Z][a-zA-Z0-9-]*\b[^>]*>/.test(afterIndent)) {
         return HTML_BLOCK_TYPES.BLOCK_LEVEL;
       }
     }
   }
   
-  // Type 7: Other complete HTML tags
+  // Type 7: Other complete HTML tags (must be alone on line after ≤3 spaces)
   // Complete open tag: <tag> or <tag attr="value">
   // Complete close tag: </tag>
-  if (/^<[a-zA-Z][a-zA-Z0-9-]*(?:\s[^>]*)?>$/.test(trimmed) || 
-      /^<\/[a-zA-Z][a-zA-Z0-9-]*>$/.test(trimmed)) {
+  if (/^<[a-zA-Z][a-zA-Z0-9-]*(?:\s[^>]*)?>$/.test(afterIndent) || 
+      /^<\/[a-zA-Z][a-zA-Z0-9-]*>$/.test(afterIndent)) {
     return HTML_BLOCK_TYPES.OTHER;
   }
   
@@ -152,6 +155,10 @@ export function findHtmlBlocks(lines) {
             break;
           }
           end++;
+        }
+        // Fix EOF handling - if we reached end without finding closing marker
+        if (end >= lines.length) {
+          end = lines.length - 1;
         }
       }
       
