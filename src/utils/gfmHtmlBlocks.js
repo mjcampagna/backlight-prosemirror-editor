@@ -68,8 +68,8 @@ export function getHtmlBlockStartType(line) {
   if (blockTagMatch) {
     const tagName = blockTagMatch[1].toLowerCase();
     if (BLOCK_LEVEL_TAGS.has(tagName)) {
-      // Must be followed by whitespace, >, or />
-      if (/^<\/?[a-zA-Z][a-zA-Z0-9-]*(?:\s|\/>|>)/.test(trimmed)) {
+      // Must be a complete tag: followed by whitespace + attributes + >, just >, or />
+      if (/^<\/?[a-zA-Z][a-zA-Z0-9-]*(?:\s[^>]*>|\/?>|>)/.test(trimmed)) {
         return HTML_BLOCK_TYPES.BLOCK_LEVEL;
       }
     }

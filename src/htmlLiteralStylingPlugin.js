@@ -1,20 +1,26 @@
-// htmlLiteralStylingPlugin.js - refactored to use pattern utility
+// htmlLiteralStylingPlugin.js - GFM-compliant HTML block detection
 import { createPatternNodeStylingPlugin } from "./patternNodeStylingPlugin.js";
+import { getHtmlBlockStartType } from "./utils/gfmHtmlBlocks.js";
 
 /**
- * Heuristic: a paragraph (or heading if enabled) is "HTML-only" if its textContent
- * is whitespace + one or more HTML-ish tags/comments/doctypes, with nothing else.
+ * GFM-compliant HTML detection function
+ * Detects if content matches GFM HTML block start patterns
  */
-const HTML_ONLY_RE =
-  /^(?:\s*(?:<!--[\s\S]*?-->|<!DOCTYPE[^>]*>|<\?[\s\S]*?\?>|<\/?\w[\s\S]*?>)\s*)+$/i;
+function isGfmHtmlBlock(textContent) {
+  const trimmed = textContent.trim();
+  if (!trimmed) return false;
+  
+  // Check if this line would start an HTML block according to GFM spec
+  return getHtmlBlockStartType(trimmed) !== null;
+}
 
 export function htmlLiteralStylingPlugin(options = {}) {
   const className = options.className || "pm-html-literal";
   const includeHeadings = !!options.includeHeadings;
 
-  // Use the pattern utility for the core functionality
+  // Use the pattern utility with GFM-compliant detection
   return createPatternNodeStylingPlugin({
-    pattern: HTML_ONLY_RE,
+    pattern: isGfmHtmlBlock,
     className,
     pluginKey: "html-literal-styling",
     nodeTypes: includeHeadings ? ["paragraph", "heading"] : ["paragraph"],

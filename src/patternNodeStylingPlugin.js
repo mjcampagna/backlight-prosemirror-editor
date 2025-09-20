@@ -28,8 +28,10 @@ export function createPatternNodeStylingPlugin(options = {}) {
     throw new Error("Both 'pattern' and 'className' options are required");
   }
 
-  // Create safe regex tester to avoid lastIndex mutations
-  const safePatternTest = createSafeRegexTester(pattern);
+  // Create pattern tester (supports both RegExp and functions)
+  const safePatternTest = typeof pattern === 'function' 
+    ? pattern 
+    : createSafeRegexTester(pattern);
 
   function matchesPattern(node) {
     // Check if this node type should be processed
