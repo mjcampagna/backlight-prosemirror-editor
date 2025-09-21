@@ -15,6 +15,10 @@ const BLOCK_LEVEL_TAGS = new Set([
   'title', 'tr', 'track', 'ul'
 ]);
 
+const CUSTOM_BLOCK_LEVEL_TAGS = new Set([
+  'collapsable-section', 'media-player'
+]);
+
 /**
  * HTML block types according to GFM spec
  */
@@ -70,7 +74,7 @@ export function getHtmlBlockStartType(line) {
   const blockTagMatch = afterIndent.match(/^<\/?([a-zA-Z][a-zA-Z0-9-]*)/);
   if (blockTagMatch) {
     const tagName = blockTagMatch[1].toLowerCase();
-    if (BLOCK_LEVEL_TAGS.has(tagName)) {
+    if (BLOCK_LEVEL_TAGS.has(tagName) || CUSTOM_BLOCK_LEVEL_TAGS.has(tagName)) {
       // Must be a complete tag - improved regex to handle > in attribute values
       if (/^<\/?[a-zA-Z][a-zA-Z0-9-]*\b[^>]*>/.test(afterIndent)) {
         return HTML_BLOCK_TYPES.BLOCK_LEVEL;
