@@ -114,3 +114,112 @@ export function extractTableRows(markdown) {
     .split('\n')
     .filter(line => isTableRow(line.trim()));
 }
+
+/**
+ * Parses cell content from a table row line
+ * @param {string} line - Table row line
+ * @returns {string[]} Array of cell contents (trimmed)
+ */
+export function parseCells(line) {
+  if (!line || !line.trim().startsWith('|')) return [];
+  
+  let content = line.trim().slice(1);
+  if (content.endsWith('|')) {
+    content = content.slice(0, -1);
+  }
+  
+  return content.split('|').map(cell => cell.trim());
+}
+
+/**
+ * Extracts alignment from a separator row
+ * @param {string} separatorLine - Separator row line
+ * @returns {Array<'left'|'center'|'right'|'none'>} Array of alignments per column
+ */
+export function parseAlignment(separatorLine) {
+  if (!isTableSeparatorRow(separatorLine)) return [];
+  
+  const cells = parseCells(separatorLine);
+  return cells.map(cell => {
+    const trimmed = cell.trim();
+    const leftColon = trimmed.startsWith(':');
+    const rightColon = trimmed.endsWith(':');
+    
+    if (leftColon && rightColon) return 'center';
+    if (rightColon) return 'right';
+    if (leftColon) return 'left';
+    return 'none';
+  });
+}
+
+/**
+ * Row types in a parsed table
+ */
+export const ROW_TYPES = {
+  HEADER: 'header',
+  SEPARATOR: 'separator',
+  DATA: 'data'
+};
+
+/**
+ * Parses a markdown table into an array of row objects
+ * @param {string} markdown - Markdown table text
+ * @returns {{
+ *   rows: Array<{type: string, cells: string[], raw: string, index: number}>,
+ *   headers: string[],
+ *   alignments: Array<'left'|'center'|'right'|'none'>,
+ *   isValid: boolean,
+ *   columnCount: number
+ * }}
+ */
+export function parseTable(markdown) {
+  if (!markdown) {
+    return { rows: [], headers: [], alignments: [], isValid: false, columnCount: 0 };
+  }
+  
+  const lines = markdown
+    .split('\n')
+    .map(line => line.trim())
+    .filter(line => line && line.startsWith('|'));
+  
+  if (lines.length === 0) {
+    return { rows: [], headers: [], alignments: [], isValid: false, columnCount: 0 };
+  }
+  
+  const rows = [];
+  let headers = [];
+  let alignments = [];
+  let isValid = false;
+  let columnCount = 0;
+  
+  lines.forEach((line, index) => {
+    const cells = parseCells(line);
+    
+    if (index === 0) {
+      // Header row
+      headers = cells;
+      columnCount = cells.length;
+      rows.push({ type: ROW_TYPES.HEADER, cells, raw: line, index });
+    } else if (index === 1 && isTableSeparatorRow(line)) {
+      // Separator row
+      alignments = parseAlignment(line);
+      isValid = cells.length === columnCount;
+      rows.push({ type: ROW_TYPES.SEPARATOR, cells, raw: line, index });
+    } else {
+      // Data row
+      rows.push({ type: ROW_TYPES.DATA, cells, raw: line, index });
+    }
+  });
+  
+  return { rows, headers, alignments, isValid, columnCount };
+}
+
+/**
+ * Gets only the data rows (excludes header and separator)
+ * @param {string} markdown - Markdown table text
+ * @returns {Array<{cells: string[], raw: string, index: number}>}
+ */
+export function getDataRows(markdown) {
+  const { rows } = parseTable(markdown);
+  return rows.filter(row => row.type === ROW_TYPES.DATA);
+}

@@ -342,3 +342,41 @@ export function getNodesByType(markdown, types) {
   const typeSet = new Set(Array.isArray(types) ? types : [types]);
   return parseMarkdownNodes(markdown).filter(node => typeSet.has(node.type));
 }
+
+/**
+ * Recombines an array of nodes back into a single Markdown string
+ * @param {Array<Object>} nodes - Array of node objects (must have `content` property)
+ * @param {Object} [options] - Options for recombining
+ * @param {string} [options.separator='\n\n'] - Separator between nodes
+ * @param {boolean} [options.preserveSpacing=false] - Use original line positions to preserve spacing
+ * @returns {string} Combined Markdown string
+ */
+export function combineNodes(nodes, options = {}) {
+  if (!nodes || nodes.length === 0) return '';
+  
+  const { separator = '\n\n', preserveSpacing = false } = options;
+  
+  if (preserveSpacing) {
+    // Reconstruct with original line spacing
+    const sortedNodes = [...nodes].sort((a, b) => a.startLine - b.startLine);
+    const lines = [];
+    let lastEndLine = -1;
+    
+    for (const node of sortedNodes) {
+      // Add blank lines to preserve original spacing
+      const gap = node.startLine - lastEndLine - 1;
+      for (let i = 0; i < gap; i++) {
+        lines.push('');
+      }
+      
+      // Add node content lines
+      lines.push(...node.content.split('\n'));
+      lastEndLine = node.endLine;
+    }
+    
+    return lines.join('\n');
+  }
+  
+  // Simple concatenation with separator
+  return nodes.map(node => node.content).join(separator);
+}
