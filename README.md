@@ -122,4 +122,4 @@ window.__PM_DEBUG = true
 
 ## License
 
-ISC
+Copyright (c) Matt Campagna. All rights reserved. See [LICENSE](LICENSE).

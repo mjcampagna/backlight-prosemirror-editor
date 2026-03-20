@@ -17,7 +17,7 @@
 	},
 	"keywords": [],
 	"author": "Matt",
-	"license": "ISC",
+	"license": "UNLICENSED",
 	"description": "",
 	"dependencies": {
 		"prosemirror-commands": "^1.7.1",
